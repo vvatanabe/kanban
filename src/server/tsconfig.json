@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/server/",
+        "noImplicitAny": false,
+        "module": "commonjs",
+        "lib": ["dom", "es2017"],
+        "target": "es5"
+    },
+    "include": [
+        "./*.ts",
+        "./*.tsx"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

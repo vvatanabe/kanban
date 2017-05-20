@@ -57,3 +57,7 @@ typings/
 # dotenv environment variables file
 .env
 
+# output
+dist/server/*
+dist/client/javascripts/*
+public/

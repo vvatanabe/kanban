@@ -58,6 +58,8 @@ typings/
 .env
 
 # output
-dist/server/*
-dist/client/javascripts/*
 public/
+dist/static/javascripts
+dist/node/*
+
+*.pem

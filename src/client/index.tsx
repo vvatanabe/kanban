@@ -40,7 +40,7 @@ fetch("/redux/state")
                 <Provider store={store}>
                     <Router history={history}>
                         <div className="backlog-kanban">
-                            <Header title="WIP - Share Task Bord" />
+                            <Header title="WIP - Shared Task Bord" />
                             <Switch>
                                 <Route exact path='/' render={ routeProps => (<Home {...routeProps} onReset={onReset} />) } />
                                 <Route path='/bord/:bordId' component={Bord} />

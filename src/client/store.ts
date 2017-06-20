@@ -4,8 +4,9 @@ import rootReducer from '../shared/reducers';
 const ReduxShareClient = require('redux-share-client');
 
 declare var window: any;
+declare var WS_HOST: string;
 
-var client = new ReduxShareClient('ws://localhost:2000', {
+var client = new ReduxShareClient(WS_HOST, {
 	debug: true,
 	autoReconnectMaxTries: 10, 
 	autoReconnectDelay: 100

@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/javascripts/",
         "noImplicitAny": false,
         "module": "commonjs",
         "lib": ["dom", "es2017"],
@@ -8,8 +7,8 @@
         "jsx": "react"
     },
     "include": [
-        "./*/*.ts",
-        "./*/*.tsx"
+        "./**/*.ts",
+        "./**/*.tsx"
     ],
     "exclude": [
         "node_modules",

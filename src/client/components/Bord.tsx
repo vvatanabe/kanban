@@ -4,6 +4,7 @@ import CardModal from '../containers/CardModal';
 import * as models from '../../shared/models';
 import { RouteComponentProps } from "react-router";
 import HTML5Backend from 'react-dnd-html5-backend';
+import TouchBackend from 'react-dnd-touch-backend';
 import { DragDropContext } from 'react-dnd';
 
 export interface BordStateProps {
@@ -64,4 +65,7 @@ const Bord: React.StatelessComponent<BordProps> = (props) => {
     )
 };
 
-export default DragDropContext(HTML5Backend)(Bord);
+const isMobile= navigator.userAgent
+    .match(/(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i) !== null
+
+export default DragDropContext(isMobile ? TouchBackend : HTML5Backend)(Bord);

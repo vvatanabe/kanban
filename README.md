@@ -1,2 +1,2 @@
-# kanban
-wip https://kanban.vvatanabe.com/
+# taskboard
+wip https://taskboard.vvatanabe.com/

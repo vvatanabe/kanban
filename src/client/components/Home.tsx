@@ -25,7 +25,7 @@ export interface HomeProps extends RouteComponentProps<{}> {
 const Home: React.StatelessComponent<HomeProps & HomeStateProps & HomeDispatchProps> = props => (
     <div>
         <h3>
-            <span className="bord-title">Bords</span>
+            <span className="bord-title">Boards</span>
             <button
                 className="add-list-button"
                 onClick={props.addBord}

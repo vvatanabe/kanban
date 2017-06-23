@@ -4,12 +4,19 @@ export interface AppState {
   lists: List[];
   cards: Card[];
   users: User[];
+  statuses: Status[];
+}
+
+export interface Status {
+  id: string;
+  name: string;
 }
 
 export interface Bord {
   id: string;
   name: string;
   listIds: string[];
+  statusIds: string[];
   cardModal: EditCardModal;
   editing?: boolean;
 }

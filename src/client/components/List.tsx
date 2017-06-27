@@ -51,42 +51,38 @@ const List: React.StatelessComponent<ListProps> = (props) => {
     return props.connectDragPreview(
         props.connectDropTarget(
             props.connectDragSource(<div className="list" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
-                <div className="list__header">
-                    <div className="list__header-title">
-                        <Editer
-                            id={props.list.id}
-                            value={props.list.name}
-                            onValueClick={props.onEditList}
-                            onEdit={props.onEditList}
-                            editing={props.list.editing}
-                            />
-                    </div>
-                    {!props.list.editing ?
-                    <div className="list__header-button">
-                        <button
-                            className="delete-list-button"
-                            onClick={handleDeleteList}
-                            >Delete</button> 
-                        <button
-                            className="add-card-button"
-                            onClick={handleCreateCard}
-                            >Add Card</button>
-                    </div>
-                    : null}
-                </div>
-                // TODO StatusLane has to become component.
-                <ul className="statuses">{props.statusLaneIds.map(statusLaneId => {
-                    <li key={statusLaneId}>
-                        <ul className="cards">{statusLane.cardIds.map(cardId => (
-                            <Card
-                                id={cardId}
-                                key={cardId}
-                                onClickCard={props.onShowModal}
-                                onMoveCard={props.onMoveCard}
-                                onDeleteCard={handleDeleteCard} />
-                        ))}</ul>
-                    </li>
-                })}</ul>
+                {
+                    <div className="list__header">
+                        <div className="list__header-title">
+                            <Editer
+                                id={props.list.id}
+                                value={props.list.name}
+                                onValueClick={props.onEditList}
+                                onEdit={props.onEditList}
+                                editing={props.list.editing}
+                                />
+                        </div> {!props.list.editing ?
+                        <div className="list__header-button">
+                            <button
+                                className="delete-list-button"
+                                onClick={handleDeleteList}
+                                >Delete</button>
+                        </div>
+                        : null}
+                    </div>}
+                <ul className="cards">
+                    {props.list.cardIds.map(cardId => (
+                        <Card
+                            id={cardId}
+                            key={cardId}
+                            onClickCard={props.onShowModal}
+                            onMoveCard={props.onMoveCard}
+                            onDeleteCard={handleDeleteCard} />
+                    ))}
+                </ul>
+                <button className="add-card-button" onClick={handleCreateCard} >
+                    Add Card
+                </button>
             </div>)
         )
     )

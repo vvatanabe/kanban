@@ -9,7 +9,6 @@ export const addBord = (): Action<Bord> => ({
         id: uuid.v4(),
         name: "New Bord",
         listIds: [],
-        statusIds: [],
         cardModal: {
             isOpen: false,
             editableForm: {

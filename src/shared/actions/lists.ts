@@ -4,6 +4,27 @@ import { List, Operator, Mover, CardMovePosition } from '../models';
 import { ItemType, Item } from '../constants/itemType';
 import * as uuid from 'uuid';
 
+// export const createStoryLane = (cardId: string): Action<StoryLane> => ({
+//     type: ActionType.CreateStoryLane,
+//     payload: {
+//         id: uuid.v4(),
+//         cardId,
+//         statusIds: []
+//     } as StoryLane
+// });
+
+// interface StoryLane {
+//     id: string;
+//     cardId: string,
+//     statusIds: string[]
+// }
+
+// interface Status {
+//     id: string;
+//     name: string;
+// }
+
+
 export const createList = (name: string): Action<List> => ({
     type: ActionType.CreateList,
     payload: {

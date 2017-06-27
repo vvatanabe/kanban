@@ -3,11 +3,11 @@ import Action from './action';
 import ActionType from '../constants/actionType';
 import { Card } from '../models';
 
-export const createCard = (summary: string): Action<Card> => ({
+export const createCard = (): Action<Card> => ({
     type: ActionType.CreateCard,
     payload: {
         id: uuid.v4(),
-        summary,
+        summary: "New Card",
         estimatedHours: 0,
         actualHours: 0,
         editing: false

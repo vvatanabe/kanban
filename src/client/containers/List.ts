@@ -16,9 +16,9 @@ const mapStateToProps = (state: AppState, ownProps: ListProps): ListStateProps =
 
 const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<Action<T>>, ownProps: ListProps): ListDispatchProps => ({
     onCreateCard: (listId: string) => {
-        const newCard = cardsActions.createCard('New card');
-        dispatch(newCard);
+        const newCard = cardsActions.createCard();
         const list = listsActions.attachToList(listId, newCard.payload.id);
+        dispatch(newCard);
         dispatch(list);
     },
     // TODO リファクタ

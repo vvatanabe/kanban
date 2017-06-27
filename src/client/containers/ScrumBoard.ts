@@ -1,8 +1,9 @@
 import * as Redux from 'redux';
 import { connect } from 'react-redux';
-import { default as Bord, BordProps, BordStateProps, BordDispatchProps } from '../components/Bord';
+import { default as Bord, ScrumBoardProps, ScrumBoardStateProps, ScrumBoardDispatchProps } from '../components/ScrumBoard';
 import Action from '../../shared/actions/action';
 import * as listsActions from '../../shared/actions/lists';
+import * as storyLanesActions from '../../shared/actions/storyLanes';
 import * as cardsActions from '../../shared/actions/cards';
 import * as modalsActions from '../../shared/actions/modals';
 import * as bordsActions from '../../shared/actions/bords';
@@ -10,22 +11,25 @@ import * as usersActions from '../../shared/actions/users';
 import { AppState, List, Card } from '../../shared/models';
 import { ItemType, Item } from '../../shared/constants/itemType';
 
-const mapStateToProps = (state: AppState, ownProps: BordProps): BordStateProps => {
-  const ownBord = state.bords.filter(bord => bord.id == ownProps.match.params.bordId)[0];
+const mapStateToProps = (state: AppState, ownProps: ScrumBoardProps): ScrumBoardStateProps => {
+  const ownBord = state.scrumBoards.filter(bord => bord.id == ownProps.match.params.bordId)[0];
   return {
     bord: ownBord,
-    users: []
-  } as BordStateProps;
+    isOpenCardModal: false
+  };
 };
 
-const mapDispatchToProps = <T>(dispatch: any, ownProps: BordProps): BordDispatchProps => ({
-    onShowModal: (cardId: string) => {
+const mapDispatchToProps = <T>(dispatch: Redux.Dispatch<Action<T>>, ownProps: ScrumBoardProps): ScrumBoardDispatchProps => ({
+    showCardModal: (cardId: string) => {
         dispatch(modalsActions.showModal(ownProps.match.params.bordId, cardId, []));
     },
-    onCreateList: (bordId: string) => {
-        const newList = listsActions.createList('Active');
-        const bordOperator = bordsActions.attachToBord(bordId, newList.payload.id);
-        dispatch(newList, bordOperator);
+    createStoryLane: (bordId: string) => {
+        const createCardAct = cardsActions.createCard();
+        const createStoryLanesAct = storyLanesActions.create(createCardAct.payload.id, ownProps.bord.storyLaneIds);
+        const boardOperator = bordsActions.attachStoryLaneToScrumBoard(bordId, createStoryLanesAct.payload.id);
+        dispatch(createCardAct);
+        dispatch(createStoryLanesAct);
+        dispatch(bordOperator);
     },
     // TODO リファクタ
     onEditList: (listId: string, name: string) => {

@@ -1,8 +1,13 @@
 {
     "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "noImplicitAny": false,
         "module": "commonjs",
-        "lib": ["dom", "es2017"],
+        "lib": [
+            "dom",
+            "es2017"
+        ],
         "target": "es5",
         "jsx": "react"
     },

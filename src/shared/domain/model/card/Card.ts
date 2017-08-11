@@ -1,4 +1,4 @@
-import { CardId, Entity, Undefined } from "../";
+import { CardId, Entity } from "../";
 
 export interface CardConstructor {
     readonly id?: CardId;
@@ -12,7 +12,8 @@ export interface CardConstructor {
     readonly editing?: boolean;
 }
 
-export class Card extends Entity<CardId>({
+const defaulValues: CardConstructor = {
+    id: new CardId(),
     summary: "New Card",
     description: "",
     startDate: "",
@@ -21,7 +22,9 @@ export class Card extends Entity<CardId>({
     actualHours: 0,
     point: 0,
     editing: false,
-}) {
+};
+
+export class Card extends Entity<CardId>(defaulValues) {
     constructor(params: CardConstructor) {
         super(params);
     }
@@ -56,4 +59,13 @@ export namespace Card {
             id: new CardId(obj.id),
         },
     });
+    export const create = (params: {
+        summary?: string;
+        description?: string;
+        startDate?: string;
+        dueDate?: string;
+        estimatedHours?: number;
+        actualHours?: number;
+        point?: number;
+    }): Card => new Card(params);
 }

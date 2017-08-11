@@ -5,12 +5,10 @@ import cards from './cards';
 import cardModals from './cardModals';
 import statuses from './statuses';
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     bords,
     lists,
     cards,
     cardModals,
     statuses,
 });
-
-export default rootReducer;

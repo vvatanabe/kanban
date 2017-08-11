@@ -5,18 +5,21 @@ interface KanbanBoardConstructor {
     readonly id?: KanbanBoardId;
     readonly name?: string;
     readonly columnIds?: List<ColumnId>;
-    readonly editing?: boolean;
     readonly cardModal?: CardModal;
+    readonly editing?: boolean;
 }
 
-export class KanbanBoard extends Entity<KanbanBoardId>({
-    id: new Undefined(),
+const defaulValues: KanbanBoardConstructor = {
+    id: new KanbanBoardId(),
     name: "New Board",
     columnIds: List.of<ColumnId>(),
+    cardModal: CardModal.create({}),
     editing: false,
-    cardModal: new CardModal(),
-}) {
-    constructor(params: KanbanBoardConstructor = {}) {
+};
+
+export class KanbanBoard extends Entity<KanbanBoardId>(defaulValues) {
+
+    constructor(params: KanbanBoardConstructor) {
         super(params);
     }
 
@@ -57,4 +60,9 @@ export namespace KanbanBoard {
         id: new KanbanBoardId(obj.id),
         columnIds: List.of(obj.columnIds.map(id => new ColumnId(id))),
     });
+    export const create = (params: {
+        name?: string;
+        columnIds?: List<ColumnId>;
+        cardModal?: CardModal;
+    }): KanbanBoard => new KanbanBoard(params);
 }

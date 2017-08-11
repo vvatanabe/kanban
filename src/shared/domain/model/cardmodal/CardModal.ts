@@ -2,18 +2,18 @@ import { Record } from "immutable";
 import { CardId, Undefined } from "../";
 
 interface CarModalConstructor {
-    cardId?: CardId;
-    isEditingSummary?: boolean;
-    isEditingDescription?: boolean;
-    isEditingStartDate?: boolean;
-    isEditingDueDate?: boolean;
-    isEditingEstimatedHours?: boolean;
-    isEditingActualHours?: boolean;
-    isEditingPoint?: boolean;
+    readonly cardId?: CardId;
+    readonly isEditingSummary?: boolean;
+    readonly isEditingDescription?: boolean;
+    readonly isEditingStartDate?: boolean;
+    readonly isEditingDueDate?: boolean;
+    readonly isEditingEstimatedHours?: boolean;
+    readonly isEditingActualHours?: boolean;
+    readonly isEditingPoint?: boolean;
 }
 
-export class CardModal extends Record({
-    cardId: new Undefined(),
+const defaultValues: CarModalConstructor = {
+    cardId: undefined,
     isEditingSummary: false,
     isEditingDescription: false,
     isEditingStartDate: false,
@@ -21,8 +21,11 @@ export class CardModal extends Record({
     isEditingEstimatedHours: false,
     isEditingActualHours: false,
     isEditingPoint: false,
-}) {
-    constructor(params: CarModalConstructor = {}) {
+}
+
+export class CardModal extends Record(defaultValues) {
+
+    constructor(params: CarModalConstructor) {
         super(params);
     }
 
@@ -92,4 +95,14 @@ export class CardModal extends Record({
     private erase(key: string): CardModal {
         return this.delete(key) as CardModal;
     }
+}
+
+export namespace CardModal {
+    export const fromJs = (obj: any): CardModal => new CardModal({
+        ...obj,
+        ...{
+            cardId: !!obj.cardId ? new CardId(obj.cardId) : undefined,
+        },
+    });
+    export const create = (params: CarModalConstructor): CardModal => new CardModal(params);
 }

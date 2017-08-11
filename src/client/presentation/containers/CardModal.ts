@@ -7,8 +7,35 @@ import * as cardsActions from '../../shared/actions/cards';
 import * as cardModalsActions from '../../shared/actions/cardModals';
 import { Action, AppState, Form, Card, Identifier } from '../../shared/models';
 
-const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
-    const card: Card = state.cards.filter(card => Identifier.equals(card.id, ownProps.data.cardId))[0];
+interface CardModalContents {
+
+}
+
+class CardModalQueryService {
+
+    constructor(readonly store: any) { }
+
+    public viewCardModal = (cardId: CardId, boardId: BoardId) => {
+        const card = this.store.cards.find(card => card.id.equals(cardId));
+        const board = this.store.boards.find(board => board.id.equals(boardId));
+        return {
+            summary: Form.create(card.summary, ownProps.data.showSummaryForm),
+            description: Form.create(card.description, ownProps.data.showDescriptionForm),
+            startDate: Form.create(card.startDate, ownProps.data.showStartDateForm),
+            dueDate: Form.create(card.dueDate, ownProps.data.showDueDateForm),
+            estimatedHours: Form.create(card.estimatedHours, ownProps.data.showEstimatedHoursForm),
+            actualHours: Form.create(card.actualHours, ownProps.data.showActualHoursForm),
+            point: Form.create(card.point, ownProps.data.showPointForm),
+        }
+
+    }
+}
+
+const cardModalQueryService = new CardModalQueryService({});
+
+
+const bindStateToProps = (ownProps: OwnProps): StateProps => {
+    const card = cardModalQueryService.viewCardModal(ownProps.cardId);
     return {
         summary: Form.create(card.summary, ownProps.data.showSummaryForm),
         description: Form.create(card.description, ownProps.data.showDescriptionForm),
@@ -19,10 +46,6 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
         point: Form.create(card.point, ownProps.data.showPointForm),
     }
 };
-
-class CardModalDispatcher {
-
-}
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action<any>>, ownProps: OwnProps): DispatchProps => {
     const boardId = ownProps.boardId;

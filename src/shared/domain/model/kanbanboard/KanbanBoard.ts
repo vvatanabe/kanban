@@ -1,8 +1,5 @@
-import { List, Record } from "immutable";
-import CardModal from "../cardmodal/CardModal";
-import ColumnId from "../column/ColumnId";
-import Undefined from "../Undefined";
-import KanbanBoardId from "./KanbanBoardId";
+import { List } from "immutable";
+import { CardModal, ColumnId, Entity, KanbanBoardId, Undefined } from "../";
 
 interface KanbanBoardConstructor {
     readonly id?: KanbanBoardId;
@@ -12,57 +9,52 @@ interface KanbanBoardConstructor {
     readonly cardModal?: CardModal;
 }
 
-const KANBAN_BOARD_DEFAULT_VALUES: KanbanBoardConstructor = {
+export class KanbanBoard extends Entity<KanbanBoardId>({
     id: new Undefined(),
     name: "New Board",
     columnIds: List.of<ColumnId>(),
     editing: false,
     cardModal: undefined,
-};
-
-export default class KanbanBoard extends Record(KANBAN_BOARD_DEFAULT_VALUES) {
-
-    public static fromJs(obj: any): KanbanBoard {
-        return new KanbanBoard({
-            ...obj,
-            id: KanbanBoardId.create(obj.id),
-            columnIds: List.of(obj.columnIds.map(id => ColumnId.create(id))),
-        });
-    }
-
+}) {
     constructor(params: KanbanBoardConstructor) {
         super(params);
     }
 
-    public id = (): KanbanBoardId => this.get("id");
-    public name = (): string => this.get("name");
-    public columnIds = (): List<ColumnId> => this.get("columnIds");
-    public editing = (): boolean => this.get("editing");
-    public cardModal = (): CardModal => this.get("cardModal");
+    get name(): string { return this.get("name"); }
+    get columnIds(): List<ColumnId> { return this.get("columnIds"); }
+    get editing(): boolean { return this.get("editing"); }
+    get cardModal(): CardModal { return this.get("cardModal"); }
+    get shouldBeOpenCardModal(): boolean { return this.cardModal.hasCardId; }
 
     public equals(obj: any): boolean {
-        return obj instanceof KanbanBoard && obj.id().equals(this.id());
+        return obj instanceof KanbanBoard && obj.id.equals(this.id);
     }
 
-    public attachColumn(columnId: ColumnId): KanbanBoard {
-        const statusLaneIds = this.columnIds().push(columnId);
-        return this.merge({ statusLaneIds }) as KanbanBoard;
+    public attachColumn(columnId: ColumnId): this {
+        return this.copy({ columnIds: this.columnIds.push(columnId) });
     }
 
-    public detachColumn(columnId: ColumnId): KanbanBoard {
-        const columnIds = this.columnIds().filter(id => !id.equals(columnId));
-        return this.merge({ columnIds }) as KanbanBoard;
+    public detachColumn(columnId: ColumnId): this {
+        return this.copy({ columnIds: this.columnIds.filter(id => !id.equals(columnId)) });
     }
 
-    public updateName(name: string): KanbanBoard {
-        return this.merge({ name }) as KanbanBoard;
+    public updateName(name: string): this {
+        return this.copy({ name });
     }
 
-    public startEditing(): KanbanBoard {
-        return this.merge({ editing: true }) as KanbanBoard;
+    public startEditing(): this {
+        return this.copy({ editing: true });
     }
 
-    public endEditing(): KanbanBoard {
-        return this.merge({ editing: false }) as KanbanBoard;
+    public endEditing(): this {
+        return this.copy({ editing: false });
     }
+}
+
+export namespace KanbanBoard {
+    export const fromJs = (obj: any): KanbanBoard => new KanbanBoard({
+        ...obj,
+        id: new KanbanBoardId(obj.id),
+        columnIds: List.of(obj.columnIds.map(id => new ColumnId(id))),
+    });
 }

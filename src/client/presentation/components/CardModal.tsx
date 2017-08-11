@@ -9,7 +9,8 @@ import Selector from "./Selector";
 
 export interface OwnProps {
     boardId: models.BoardId;
-    data: models.CardModal;
+    cardId?: models.CardId;
+    condition: models.CardModal;
 }
 
 export interface StateProps {
@@ -54,7 +55,7 @@ export type MergeProps = {
         });
 } & OwnProps;
 
-export type Props = StateProps & DispatchProps & MergeProps;
+export type Props = StateProps & DispatchProps & MergeProps & React.Props<{}>;
 
 const customStyles = {
     overlay: {
@@ -98,7 +99,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
     // } : null;
 
     return (<ReactModal
-        isOpen={true}
+        isOpen={props.condition.opening}
         contentLabel="edit-card-dialog"
         onRequestClose={props.close}
         style={customStyles}

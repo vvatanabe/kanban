@@ -1,5 +1,6 @@
 export * from "./card/Card";
 export * from "./card/CardId";
+export * from "./cardmodal/CardModal";
 export * from "./column/Column";
 export * from "./column/ColumnId";
 export * from "./Identifier";

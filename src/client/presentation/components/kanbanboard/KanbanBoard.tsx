@@ -38,7 +38,7 @@ const KanbanBoard: React.StatelessComponent<OwnProps & ActionProps> = props => (
                 />
             ))}
         </div>
-        {!!props.board.cardModal ? <CardModal boardId={props.board.id} data={props.board.cardModal} /> : null}
+        {!!props.board.shouldBeOpenCardModal ? <CardModal context={props.board} data={props.board.cardModal} /> : null}
     </div>
 );
 

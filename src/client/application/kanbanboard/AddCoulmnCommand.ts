@@ -1,6 +1,5 @@
-import KanbanBoardId from "../../../shared/domain/model/kanbanboard/KanbanBoardId";
+import { KanbanBoardId } from "../../../shared/domain/model/";
 
-export default interface AddCoulmnCommand {
-    readonly boardId: KanbanBoardId;
+export interface AddCoulmnCommand {
     readonly name: String;
 }

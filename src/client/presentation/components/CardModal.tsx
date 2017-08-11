@@ -84,7 +84,7 @@ const customStyles = {
     }
 };
 
-const CardModal: React.StatelessComponent<Props> = props => {
+const CardModal: React.StatelessComponent<Props> = (props: Props, context: any) => {
 
     const options: ReactSelect.Option[] = [];
 
@@ -99,7 +99,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
     // } : null;
 
     return (<ReactModal
-        isOpen={props.condition.opening}
+        isOpen={true}
         contentLabel="edit-card-dialog"
         onRequestClose={props.close}
         style={customStyles}
@@ -108,9 +108,9 @@ const CardModal: React.StatelessComponent<Props> = props => {
             <div className="properties-value summary">
                 <Editer
                     value={props.summary.value}
-                    editing={props.summary.isOpen}
-                    onValueClick={props.showSummaryForm}
-                    onEdit={summary => props.updateCard({ summary })}
+                    editing={props.summary.editing}
+                    onValueClick={props.showFormOfSummary}
+                    onEdit={value => props.updateCard({ summary: value })}
                 />
             </div>
         </div>
@@ -119,7 +119,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
             <div className="properties-value description">
                 <Editer
                     value={props.description.value}
-                    editing={props.description.isOpen}
+                    editing={props.description.editing}
                     onValueClick={props.showDescriptionForm}
                     onEdit={description => props.updateCard({ description })}
                 />
@@ -130,7 +130,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
                 <div className="properties-label">Start Date</div>
                 <div className="properties-value">
                     <Calendar
-                        isOpen={props.startDate.isOpen}
+                        isOpen={props.startDate.editing}
                         selected={props.startDate.value ? moment(props.startDate.value) : null}
                         onChangeValue={startDate => props.updateCard({ startDate })}
                         onValueClick={props.showStartDateForm}
@@ -141,7 +141,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
                 <div className="properties-label">Due Date</div>
                 <div className="properties-value">
                     <Calendar
-                        isOpen={props.dueDate.isOpen}
+                        isOpen={props.dueDate.editing}
                         selected={props.dueDate.value ? moment(props.dueDate.value) : null}
                         onChangeValue={dueDate => props.updateCard({ dueDate })}
                         onValueClick={props.showDueDateForm}
@@ -155,7 +155,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
                         value={`${props.estimatedHours.value}`}
                         onValueClick={props.showEstimatedHoursForm}
                         onEdit={estimatedHours => props.updateCard({ estimatedHours })}
-                        editing={props.estimatedHours.isOpen}
+                        editing={props.estimatedHours.editing}
                     />
                 </div>
             </div>
@@ -166,7 +166,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
                         value={`${props.actualHours.value}`}
                         onValueClick={props.showActualHoursForm}
                         onEdit={actualHours => props.updateCard({ actualHours })}
-                        editing={props.actualHours.isOpen}
+                        editing={props.actualHours.editing}
                     />
                 </div>
             </div>
@@ -177,7 +177,7 @@ const CardModal: React.StatelessComponent<Props> = props => {
                         value={`${props.point.value}`}
                         onValueClick={props.showPointForm}
                         onEdit={point => props.updateCard({ point })}
-                        editing={props.point.isOpen}
+                        editing={props.point.editing}
                     />
                 </div>
             </div>

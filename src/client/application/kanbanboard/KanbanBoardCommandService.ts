@@ -1,16 +1,14 @@
 import { List } from "immutable";
 import { injectable } from "inversify";
-import Column from "../../../shared/domain/model/column/Column";
-import Board from "../../../shared/domain/model/board/Board";
-import BoardId from "../../../shared/domain/model/board/BoardId";
+
+import { Column, KanbanBoard, KanbanBoardId } from "../../../shared/domain/model";
 import BoardRepository from "../../../shared/domain/model/board/BoardRepository";
-import BoardType from "../../../shared/domain/model/board/BoardType";
 import { lazyInject } from "../../modules/TaskBoardModules";
 import AddKanbanBoardCommand from "./AddKanbanBoardCommand";
 import AddScrumBoardCommand from "./AddScrumBoardCommand";
 import ColumnRepository from "../../../shared/domain/model/columnRepository/ColumnRepository";
 import KanbanBoardRepository from "../../../shared/domain/model/kanbanboard/KanbanBoardRepository";
-import AddCoulmnCommand from "./AddCoulmnCommand";
+import { AddCoulmnCommand } from "./AddCoulmnCommand";
 
 @injectable()
 class KanbanBoardCommandService {
@@ -20,14 +18,11 @@ class KanbanBoardCommandService {
     @lazyInject(ColumnRepository)
     private readonly columnRepository: ColumnRepository;
 
-
-    // this.dispatch(statusLanesAction.createStatusLane());
-    // this.dispatch(boardsAction.attachStatusLaneToBoard(this.boardId));
-    public addColumn(command: AddCoulmnCommand) {
-        const column = Column.create({ name: command.name });
+    public addColumn = (command: AddCoulmnCommand) => (boardId: KanbanBoardId) => {
+        const column = new Column({ name: command.name });
         const addedCoulmn = this.columnRepository.addCoulmn(column);
-        this.kanbanBoardRepository.attachCoulmn(command.boardId, addedCoulmn.id);
-    }
+        this.kanbanBoardRepository.attachCoulmn(boardId, addedCoulmn.id);
+    };
 
     // this.dispatch(statusLanesAction.detachStatusLaneFromBoard(this.boardId, laneId));
     // this.dispatch(statusLanesAction.deleteStatusLane(laneId));
@@ -42,10 +37,16 @@ class KanbanBoardCommandService {
         this.dispatch(statusLanesAction.moveStatusLane(src, dist));
     }
 
-    public openCardModalOnBoard(cardId: CardId) {
-        this.dispatch(cardModalsAction.openCardModal(this.boardId, cardId));
+    public openCardModalOnBoard(cardId: CardId, boardId: BoardId) {
+        const boardToUpdate = this.kanbanBoardRepository.findById(boardId).openCardModal(cardId);
+        this.boardRepository.update(boardToUpdate);
+    }
+
+    public closeCardModalOnBoard(cardId: CardId, boardId: BoardId) {
+        const boardToUpdate = this.kanbanBoardRepository.findById(boardId).closeCardModal(cardId);
+        this.boardRepository.update(boardToUpdate);
     }
 
 }
 
-export default KanbanBoardApplicationService;
+export const kanbanBoardApplicationService = new KanbanBoardCommandService();

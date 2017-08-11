@@ -2,14 +2,14 @@ import { Record } from "immutable";
 import { CardId, Undefined } from "../";
 
 interface CarModalConstructor {
-    cardId: CardId;
-    isEditingSummary: boolean;
-    isEditingDescription: boolean;
-    isEditingStartDate: boolean;
-    isEditingDueDate: boolean;
-    isEditingEstimatedHours: boolean;
-    isEditingActualHours: boolean;
-    isEditingPoint: boolean;
+    cardId?: CardId;
+    isEditingSummary?: boolean;
+    isEditingDescription?: boolean;
+    isEditingStartDate?: boolean;
+    isEditingDueDate?: boolean;
+    isEditingEstimatedHours?: boolean;
+    isEditingActualHours?: boolean;
+    isEditingPoint?: boolean;
 }
 
 export class CardModal extends Record({
@@ -22,7 +22,7 @@ export class CardModal extends Record({
     isEditingActualHours: false,
     isEditingPoint: false,
 }) {
-    constructor(params: CarModalConstructor) {
+    constructor(params: CarModalConstructor = {}) {
         super(params);
     }
 

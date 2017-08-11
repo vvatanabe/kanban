@@ -14,9 +14,9 @@ export class KanbanBoard extends Entity<KanbanBoardId>({
     name: "New Board",
     columnIds: List.of<ColumnId>(),
     editing: false,
-    cardModal: undefined,
+    cardModal: new CardModal(),
 }) {
-    constructor(params: KanbanBoardConstructor) {
+    constructor(params: KanbanBoardConstructor = {}) {
         super(params);
     }
 

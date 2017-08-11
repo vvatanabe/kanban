@@ -7,15 +7,29 @@ import * as cardsActions from '../../shared/actions/cards';
 import * as cardModalsActions from '../../shared/actions/cardModals';
 import { Action, AppState, Form, Card, Identifier } from '../../shared/models';
 
-interface CardModalContents {
 
+
+interface ModalForm<T> {
+    value: T;
+    editing: boolean;
+}
+
+interface CardModalContents {
+    cardId: CardId;
+    summary: ModalForm<string>;
+    description: ModalForm<string>;
+    startDate: ModalForm<string>;
+    dueDate: ModalForm<string>;
+    estimatedHours: ModalForm<number>;
+    actualHours: ModalForm<number>;
+    point: ModalForm<number>;
 }
 
 class CardModalQueryService {
 
     constructor(readonly store: any) { }
 
-    public viewCardModal = (cardId: CardId, boardId: BoardId) => {
+    public viewCardModal = (cardId: CardId, boardId: BoardId): CardModalContents => {
         const card = this.store.cards.find(card => card.id.equals(cardId));
         const board = this.store.boards.find(board => board.id.equals(boardId));
         return {
@@ -31,94 +45,90 @@ class CardModalQueryService {
     }
 }
 
+class CardModalCommandService {
+
+    constructor(readonly store: any) { }
+
+    public showFormOfSummary = () => (boardId: BoardId) => {
+        const board = this.kanbanBoardRepository.findById(boardId).showFormOfSummaryOnCardModal();
+        this.kanbanBoardRepository.update(board);
+    }
+
+    public updateCard = (command: UpdateCardCommand) => (boardId: BoardId) => {
+        const updatedCard = this.cardRepository.findById(command.id).update({
+            summary: command.summary,
+            description: command.description,
+            startDate: command.startDate,
+            dueDate: command.dueDate,
+            estimatedHours: command.estimatedHours,
+            actualHours: command.actualHours,
+            point: command.point,
+            editing: false,
+        });
+        const updatedBoard = this.kanbanBoardRepository.findById(boardId).hideFormOfAllOnCardModal();
+        this.cardRepository.update(updatedCard);
+        this.kanbanBoardRepository.update(updatedBoard);
+    }
+
+}
+
 const cardModalQueryService = new CardModalQueryService({});
+const cardModalCommandService = new CardModalCommandService({});
 
 
 const bindStateToProps = (ownProps: OwnProps): StateProps => {
-    const card = cardModalQueryService.viewCardModal(ownProps.cardId);
-    return {
-        summary: Form.create(card.summary, ownProps.data.showSummaryForm),
-        description: Form.create(card.description, ownProps.data.showDescriptionForm),
-        startDate: Form.create(card.startDate, ownProps.data.showStartDateForm),
-        dueDate: Form.create(card.dueDate, ownProps.data.showDueDateForm),
-        estimatedHours: Form.create(card.estimatedHours, ownProps.data.showEstimatedHoursForm),
-        actualHours: Form.create(card.actualHours, ownProps.data.showActualHoursForm),
-        point: Form.create(card.point, ownProps.data.showPointForm),
-    }
+    const contents = cardModalQueryService.viewCardModal(ownProps.boardId, ownProps.cardId);
+    return { contents }
 };
 
-const mapDispatchToProps = (dispatch: Redux.Dispatch<Action<any>>, ownProps: OwnProps): DispatchProps => {
-    const boardId = ownProps.boardId;
-    const cardId = ownProps.data.cardId;
-    return {
-        close() {
-            dispatch(cardModalsActions.close(boardId));
-        },
-        update(card: Card) {
-            dispatch(cardsActions.updateCard(card));
-            dispatch(cardModalsActions.hideAllForms(boardId, cardId));
-        },
-        showSummaryForm() {
-            dispatch(cardModalsActions.showSummaryForm(boardId, cardId));
-        },
-        showDescriptionForm() {
-            dispatch(cardModalsActions.showDescriptionForm(boardId, cardId));
-        },
-        showStartDateForm() {
-            dispatch(cardModalsActions.showStartDateForm(boardId, cardId));
-        },
-        showDueDateForm() {
-            dispatch(cardModalsActions.showDueDateForm(boardId, cardId));
-        },
-        showEstimatedHoursForm() {
-            dispatch(cardModalsActions.showEstimatedHoursForm(boardId, cardId));
-        },
-        showActualHoursForm() {
-            dispatch(cardModalsActions.showActualHoursForm(boardId, cardId));
-        },
-        showPointForm() {
-            dispatch(cardModalsActions.showPointForm(boardId, cardId));
-        }
-    }
-};
 
-const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps): MergeProps => {
-    return Object.assign({}, ownProps, {
-        updateCard({
-            summary = stateProps.summary.value,
-            description = stateProps.description.value,
-            startDate = stateProps.startDate.value,
-            dueDate = stateProps.dueDate.value,
-            estimatedHours = `${stateProps.estimatedHours.value}`,
-            actualHours = `${stateProps.actualHours.value}`,
-            point = `${stateProps.point.value}`,
-        }: {
-                summary?: string;
-                description?: string;
-                startDate?: string;
-                dueDate?: string;
-                estimatedHours?: string;
-                actualHours?: string;
-                point?: string;
-            }) {
-            const updateCard = Card.create({
-                id: ownProps.data.cardId,
-                editing: false,
-                summary,
-                description,
-                startDate,
-                dueDate,
-                estimatedHours: parseInt(estimatedHours, 10),
-                actualHours: parseInt(actualHours, 10),
-                point: parseInt(point, 10)
-            })
-            dispatchProps.update(updateCard);
-        }
-    })
+interface UpdateCardCommand {
+    readonly summary?: string;
+    readonly description?: string;
+    readonly startDate?: string;
+    readonly dueDate?: string;
+    readonly estimatedHours?: number;
+    readonly actualHours?: number;
+    readonly point?: number;
 }
 
-export default connect<StateProps, DispatchProps, OwnProps, MergeProps>(
+const bindActionToProps = (ownProps: OwnProps): ActionProps => ({
+    updateCard(values: { [key: string]: any }) {
+        const command: UpdateCardCommand = {
+            summary: values.summary,
+            description: values.description,
+            startDate: values.startDate,
+            dueDate: values.dueDate,
+            estimatedHours: values.estimatedHours,
+            actualHours: values.actualHours,
+            point: values.point,
+        };
+        this.commandService.updateCard(ownProps.cardId, command)(ownProps.boardId);
+    },
+    showFormOfSummary() {
+        this.commandService.showFormOfSummary()(ownProps.boardId);
+    },
+    showFormOfDescription() {
+        this.commandService.showFormOfDescription()(ownProps.boardId);
+    },
+    showFormOfStartDate() {
+        this.commandService.showFormOfStartDate()(ownProps.boardId);
+    },
+    showFormOfDueDate() {
+        this.commandService.showFormOfDueDate()(ownProps.boardId);
+    },
+    showFormOfEstimatedHours() {
+        this.commandService.showFormOfEstimatedHours()(ownProps.boardId);
+    },
+    showFormOfActualHours() {
+        this.commandService.showFormOfActualHours()(ownProps.boardId);
+    },
+    showFormOfPoint() {
+        this.commandService.showFormOfPoint()(ownProps.boardId);
+    },
+});
+
+export default connect<StateProps, DispatchProps, OwnProps>(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps
 )(CardModal);

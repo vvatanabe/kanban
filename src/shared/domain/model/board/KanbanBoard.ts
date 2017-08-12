@@ -1,33 +1,30 @@
 import { List } from "immutable";
-import { CardModal, ColumnId, Entity, KanbanBoardId, Undefined } from "../";
+import { Board, BoardId, CardModal, ColumnId } from "../";
+
 
 interface KanbanBoardConstructor {
-    readonly id?: KanbanBoardId;
+    readonly id?: BoardId;
     readonly name?: string;
-    readonly columnIds?: List<ColumnId>;
     readonly cardModal?: CardModal;
     readonly editing?: boolean;
+    readonly columnIds?: List<ColumnId>;
 }
 
 const defaulValues: KanbanBoardConstructor = {
-    id: new KanbanBoardId(),
+    id: new BoardId(),
     name: "New Board",
-    columnIds: List.of<ColumnId>(),
     cardModal: CardModal.create({}),
     editing: false,
+    columnIds: List.of(),
 };
 
-export class KanbanBoard extends Entity<KanbanBoardId>(defaulValues) {
+export class KanbanBoard extends Board(defaulValues) {
 
     constructor(params: KanbanBoardConstructor) {
         super(params);
     }
 
-    get name(): string { return this.get("name"); }
     get columnIds(): List<ColumnId> { return this.get("columnIds"); }
-    get editing(): boolean { return this.get("editing"); }
-    get cardModal(): CardModal { return this.get("cardModal"); }
-    get shouldBeOpenCardModal(): boolean { return this.cardModal.hasCardId; }
 
     public equals(obj: any): boolean {
         return obj instanceof KanbanBoard && obj.id.equals(this.id);
@@ -41,24 +38,13 @@ export class KanbanBoard extends Entity<KanbanBoardId>(defaulValues) {
         return this.copy({ columnIds: this.columnIds.filter(id => !id.equals(columnId)) });
     }
 
-    public updateName(name: string): this {
-        return this.copy({ name });
-    }
-
-    public startEditing(): this {
-        return this.copy({ editing: true });
-    }
-
-    public endEditing(): this {
-        return this.copy({ editing: false });
-    }
 }
 
 export namespace KanbanBoard {
     export const fromJs = (obj: any): KanbanBoard => new KanbanBoard({
         ...obj,
-        id: new KanbanBoardId(obj.id),
-        columnIds: List.of(obj.columnIds.map(id => new ColumnId(id))),
+        id: new BoardId(obj.id),
+        columnIds: List.of(obj.columnIds.map(columnId => new ColumnId(columnId))),
     });
     export const create = (params: {
         name?: string;

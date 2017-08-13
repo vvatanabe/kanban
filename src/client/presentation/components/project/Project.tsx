@@ -31,27 +31,7 @@ const Project: React.StatelessComponent<Props> = props => (
         </h3>
         <div className="bord-tile-list">
             {props.boards.map(board => (
-                <div key={board.id.value} className="bord-tile" onClick={() => props.history.push(`/board/${board.id.value}`)}>
-                    <div className="bord-tile__header"
-                        onClick={e => e.stopPropagation()}>
-                        <div className="bord-tile__header__title">
-                            <Editer
-                                value={board.name}
-                                onValueClick={() => props.openFormOfBoardName(board.id)}
-                                onEdit={value => props.updateFormOfBoardName(board.id, value)}
-                                editing={board.editingName}
-                            />
-                        </div>
-                        <div className="bord-tile__header__button">
-                            <button
-                                className="delete-bord-button"
-                                onClick={() => props.deleteBoard(board.id)}
-                            >
-                                Delete
-                        </button>
-                        </div>
-                    </div>
-                </div>
+                <BoardTile id={boardId} deleteBoard={service.deleteBoard} />
             ))}
         </div>
     </div>

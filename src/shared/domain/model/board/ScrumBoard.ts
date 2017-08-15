@@ -1,25 +1,22 @@
 import { List } from "immutable";
-import { Board, BoardId, CardModal, ColumnId, StatusId, UserStoryId } from "../";
+import { Board, BoardConstructor, BoardId, BoardType, CardModal, StatusId, UserStoryId } from "../";
 
-interface ScrumBoardConstructor {
-    readonly id?: BoardId;
-    readonly name?: string;
-    readonly cardModal?: CardModal;
-    readonly editing?: boolean;
-    readonly userStoryIds?: List<UserStoryId>;
-    readonly statusIds?: List<StatusId>;
+interface ScrumBoardConstructor extends BoardConstructor {
+    readonly userStoryIds: List<UserStoryId>;
+    readonly statusIds: List<StatusId>;
 }
 
-const defaulValues: ScrumBoardConstructor = {
+const defaultValues: ScrumBoardConstructor = {
     id: new BoardId(),
-    name: "New Board",
+    type: BoardType.KanbanBoard,
+    name: "",
     cardModal: CardModal.create({}),
     editing: false,
     userStoryIds: List.of(),
     statusIds: List.of(),
 };
 
-export class ScrumBoard extends Board(defaulValues) {
+export class ScrumBoard extends Board(defaultValues) {
 
     constructor(params: ScrumBoardConstructor) {
         super(params);
@@ -28,18 +25,33 @@ export class ScrumBoard extends Board(defaulValues) {
     get userStoryIds(): List<UserStoryId> { return this.get("userStoryIds"); }
     get statusIds(): List<StatusId> { return this.get("statusIds"); }
 
+    public addUserStory(userStoryId: UserStoryId): ScrumBoard {
+        return this.merge({
+            userStoryIds: this.userStoryIds.push(userStoryId),
+        }) as ScrumBoard;
+    }
+
+    public removeUserStory(userStoryId: UserStoryId): ScrumBoard {
+        return this.merge({
+            userStoryIds: this.userStoryIds.filter(id => !id.equals(userStoryId)),
+        }) as ScrumBoard;
+    }
+
     public equals(obj: any): boolean {
-        return obj instanceof ScrumBoard && obj.id.equals(this.id);
+        return obj instanceof ScrumBoard && this.id.equals(obj.id);
     }
 
-    public addUserStory(userStoryId: UserStoryId): this {
-        return this.copy({ userStoryIds: this.userStoryIds.push(userStoryId) });
+    public toPlaneObject(): { [key: string]: any } {
+        const obj = this.toJS();
+        return {
+            ...obj,
+            ...{
+                id: this.id.value,
+                userStoryIds: this.userStoryIds.map(id => id.value),
+                statusIds: this.statusIds.map(id => id.value),
+            },
+        };
     }
-
-    public removeUserStory(userStoryId: UserStoryId): this {
-        return this.copy({ userStoryIds: this.userStoryIds.filter(id => !id.equals(userStoryId)) });
-    }
-
 }
 
 export namespace ScrumBoard {
@@ -51,9 +63,5 @@ export namespace ScrumBoard {
             userStoryIds: List.of(obj.userStoryIds.map(userStoryId => new UserStoryId(userStoryId))),
         },
     });
-    export const create = (params: {
-        name?: string;
-        userStoryIds?: List<UserStoryId>;
-        statusIds?: List<StatusId>;
-    }): ScrumBoard => new ScrumBoard(params);
+    export const create = (name: string): ScrumBoard => new ScrumBoard({ ...defaultValues, ...{ name } });
 }

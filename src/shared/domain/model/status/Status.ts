@@ -1,65 +1,42 @@
-import { Entity } from "./Entity";
-import { StatusId } from "./StatusId";
+import { Entity, EntityConstructor, StatusId } from "../";
 
-export class Status implements Entity<StatusId> {
+export interface StatusConstructor extends EntityConstructor<StatusId> {
+    readonly name: string;
+}
 
-    constructor(
-        readonly id: StatusId,
-        readonly name: string,
-    ) { }
+const defaultValues: StatusConstructor = {
+    id: new StatusId(),
+    name: "",
+};
+
+export class Status extends Entity<StatusId>(defaultValues) {
+
+    constructor(params: StatusConstructor) {
+        super(params);
+    }
 
     public equals(obj: any): boolean {
-        return obj instanceof Status && obj.id.equals(this.id)
+        return obj instanceof Status && this.id.equals(obj.id);
     }
 
-    public copy(params: {
-        id?: Status,
-        name?: string,
-    }): Status {
-        return Object.assign({}, this, params)
+    public toPlaneObject(): { [key: string]: any; } {
+        throw new Error("Method not implemented.");
     }
-
 }
 
 export namespace Status {
 
     export function fromJs(obj: any): Status {
-        return Status.create(Object.assign({}, obj, {
-            id: Status.create(obj.id)
-        }));
+        return new Status({
+            ...obj,
+            ...{
+                id: new StatusId(obj.id),
+            },
+        });
     }
 
-    export function create({
-        id = undefined,
-        name = ""
-    }: {
-            id?: StatusId;
-            name?: string;
-        }): Status {
-        return new Status(id, name);
+    export function create(name: string): Status {
+        return new Status({ ...defaultValues, ...{ name } });
     }
 
 }
-
-import { Status, StatusId } from '../models';
-
-const DEFAULT_STATUSES: Status[] = [
-    {
-        id: StatusId.create("097c42e1-d15f-4edf-a098-21ea10f1ab14"),
-        name: "Open",
-    },
-    {
-        id: StatusId.create("fff8d375-5600-4ecc-9dfc-ff59e656a458"),
-        name: "In Progress",
-    },
-    {
-        id: StatusId.create("38feef6e-b11c-4a77-b323-1a1aa941be97"),
-        name: "Resolved",
-    },
-    {
-        id: StatusId.create("b167ab43-a641-4937-aa60-ecabfe348b43"),
-        name: "Closed",
-    }
-]
-
-export default DEFAULT_STATUSES;

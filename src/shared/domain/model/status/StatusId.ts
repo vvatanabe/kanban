@@ -1,12 +1,14 @@
-import { Identifier } from "./Identifier";
+import { Identifier } from "../";
 
-export class StatusId implements Identifier<string> {
-    readonly isUndefined: boolean = false;
-    constructor(readonly value: string) {}
-    equals(obj: any): boolean {
+export class StatusId extends Identifier<string> {
+    constructor(value: string = Identifier.gen()) {
+        super(value);
+    }
+    public equals(obj: any): boolean {
         return obj instanceof StatusId && obj.value === this.value
     }
 }
+
 export namespace StatusId {
     export function create(value: string): StatusId {
         return new StatusId(value);

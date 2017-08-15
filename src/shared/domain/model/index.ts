@@ -14,3 +14,7 @@ export * from "./board/ScrumBoard";
 export * from "./board/ScrumBoardRepository";
 export * from "./board/KanbanBoard";
 export * from "./board/KanbanBoardRepository";
+export * from "./project/Project";
+export * from "./project/ProjectId";
+export * from "./status/StatusId";
+export * from "./status/Status";

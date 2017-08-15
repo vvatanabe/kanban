@@ -7,6 +7,7 @@ import UserStory from "./userStory/UserStory";
 import Column from "./column/Column";
 
 export interface AppState {
+  readonly projects: List<Project>;
   readonly kanbnaBoards: List<KanbanBoard>;
   readonly scrumBoards: List<ScrumBoard>;
   readonly userStories: List<UserStory>;

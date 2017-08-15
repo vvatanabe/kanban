@@ -6,7 +6,7 @@ import KanbanBoard from "./board/KanbanBoard";
 import ScrumBoard from "../containers/ScrumBoard";
 
 export interface StateProps {
-    board?: models.Board;
+    board?: models.KanbanBoard | models.ScrumBoard;
 }
 
 export interface DispatchProps { }

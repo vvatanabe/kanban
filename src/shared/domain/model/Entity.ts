@@ -1,12 +1,24 @@
 import { Record } from "immutable";
-import { Identifier } from "./";
+import { Identifier } from "./Identifier";
 
-export const Entity = <ID extends Identifier<any>>(defaultValues: any = {}) => {
+export interface EntityConstructor<ID extends Identifier<any>> {
+    readonly id: ID;
+    readonly [key: string]: any;
+}
 
-    return class extends Record(defaultValues) {
-        get id(): ID { return this.get("id"); }
-        public copy(values: { [key: string]: any }): this {
-            return this.merge(values) as this;
+export const Entity = <ID extends Identifier<any>>(defaultValues: EntityConstructor<ID>) => {
+    abstract class EntityClass extends Record({ ...defaultValues }) {
+
+        constructor(params: EntityConstructor<ID>) {
+            super(params);
         }
-    };
+
+        get id(): ID { return this.get("id"); }
+
+        public abstract equals(obj: any): boolean;
+
+        public abstract toPlaneObject(): { [key: string]: any };
+
+    }
+    return EntityClass;
 };

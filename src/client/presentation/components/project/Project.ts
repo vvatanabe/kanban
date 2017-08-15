@@ -10,6 +10,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => ({
   orderOfBoards: state.kanbanBoards
     .concat(state.scrumBoards)
     .sort((b1, b2) => new Date(b1.date) - new Date(b2.date)),
+
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action<any>>, ownProps: OwnProps): DispatchProps => ({

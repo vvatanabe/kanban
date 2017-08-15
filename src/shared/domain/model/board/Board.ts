@@ -1,5 +1,5 @@
-import { List, Map, Record } from "immutable";
-import { BoardId, BoardType, CardModal, ColumnId, Entity, EntityConstructor } from "../";
+import { List, Record } from "immutable";
+import { BoardId, BoardType, CardModal, Entity, EntityConstructor } from "../";
 
 export interface BoardConstructor extends EntityConstructor<BoardId> {
     readonly type: BoardType;
@@ -24,7 +24,7 @@ export const Board = (values: BoardConstructor) => {
         }
 
         get name(): string { return this.get("name"); }
-        get type(): string { return this.get("type"); }
+        get type(): BoardType { return this.get("type"); }
         get cardModal(): CardModal { return this.get("cardModal"); }
         get editing(): boolean { return this.get("editing"); }
         get shouldBeOpenCardModal(): boolean { return this.cardModal.hasCardId; }
@@ -34,11 +34,11 @@ export const Board = (values: BoardConstructor) => {
         }
 
         public startEditing(): this {
-            return this.copy({ editing: true }) as this;
+            return this.merge({ editing: true }) as this;
         }
 
         public endEditing(): this {
-            return this.copy({ editing: false }) as this;
+            return this.merge({ editing: false }) as this;
         }
 
     }

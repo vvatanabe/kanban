@@ -1,20 +1,19 @@
-import { CardId, Entity } from "../";
+import { CardId, Entity, EntityConstructor } from "../";
 
-export interface CardConstructor {
-    readonly id?: CardId;
-    readonly summary?: string;
-    readonly description?: string;
-    readonly startDate?: string;
-    readonly dueDate?: string;
-    readonly estimatedHours?: number;
-    readonly actualHours?: number;
-    readonly point?: number;
-    readonly editing?: boolean;
+export interface CardConstructor extends EntityConstructor<CardId> {
+    readonly summary: string;
+    readonly description: string;
+    readonly startDate: string;
+    readonly dueDate: string;
+    readonly estimatedHours: number;
+    readonly actualHours: number;
+    readonly point: number;
+    readonly editing: boolean;
 }
 
 const defaulValues: CardConstructor = {
     id: new CardId(),
-    summary: "New Card",
+    summary: "",
     description: "",
     startDate: "",
     dueDate: "",
@@ -41,6 +40,7 @@ export class Card extends Entity<CardId>(defaulValues) {
     public equals(obj: any): boolean {
         return obj instanceof Card && obj.id.equals(this.id);
     }
+
     public toJS(): any {
         const obj = super.toJS();
         return {
@@ -67,5 +67,8 @@ export namespace Card {
         estimatedHours?: number;
         actualHours?: number;
         point?: number;
-    }): Card => new Card(params);
+    }): Card => new Card({
+        ...defaulValues,
+        ...params,
+    });
 }

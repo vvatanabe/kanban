@@ -41,7 +41,7 @@ export class ScrumBoard extends Board(defaultValues) {
         return obj instanceof ScrumBoard && this.id.equals(obj.id);
     }
 
-    public toPlaneObject(): { [key: string]: any } {
+    public toJs(): { [key: string]: any } {
         const obj = this.toJS();
         return {
             ...obj,

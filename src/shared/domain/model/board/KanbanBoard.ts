@@ -8,7 +8,7 @@ interface KanbanBoardConstructor extends BoardConstructor {
 const defaultValues: KanbanBoardConstructor = {
     id: new BoardId(),
     type: BoardType.KanbanBoard,
-    name: "New Kanban Board",
+    name: "",
     cardModal: CardModal.create({}),
     editing: false,
     columnIds: List.of(),
@@ -34,7 +34,7 @@ export class KanbanBoard extends Board(defaultValues) {
         return obj instanceof KanbanBoard && this.id.equals(obj.id);
     }
 
-    public toPlaneObject(): { [key: string]: any } {
+    public toJs(): { [key: string]: any } {
         const obj = this.toJS();
         return {
             ...obj,

@@ -7,21 +7,23 @@ export interface ProjectConstructor extends EntityConstructor<ProjectId> {
 
 const defaultValues: ProjectConstructor = {
     id: new ProjectId(),
+    editing: false,
     boardIds: List.of(),
 };
 
 export class Project extends Entity<ProjectId>(defaultValues) {
+
+    get boardIds(): List<ProjectId> { return this.get("boardIds"); }
+
     constructor(params: ProjectConstructor) {
         super(params);
     }
-
-    get boardIds(): List<ProjectId> { return this.get("boardIds"); }
 
     public equals(obj: any): boolean {
         return obj instanceof Project && obj.id.equals(this.id);
     }
 
-    public toPlaneObject(): { [key: string]: any } {
+    public toJs(): { [key: string]: any } {
         const obj = super.toJS();
         return {
             ...obj,

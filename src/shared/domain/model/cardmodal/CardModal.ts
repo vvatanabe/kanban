@@ -1,15 +1,15 @@
 import { Record } from "immutable";
-import { CardId, Undefined } from "../";
+import { CardId } from "../";
 
 interface CarModalConstructor {
-    readonly cardId?: CardId;
-    readonly isEditingSummary?: boolean;
-    readonly isEditingDescription?: boolean;
-    readonly isEditingStartDate?: boolean;
-    readonly isEditingDueDate?: boolean;
-    readonly isEditingEstimatedHours?: boolean;
-    readonly isEditingActualHours?: boolean;
-    readonly isEditingPoint?: boolean;
+    readonly cardId: CardId;
+    readonly isEditingSummary: boolean;
+    readonly isEditingDescription: boolean;
+    readonly isEditingStartDate: boolean;
+    readonly isEditingDueDate: boolean;
+    readonly isEditingEstimatedHours: boolean;
+    readonly isEditingActualHours: boolean;
+    readonly isEditingPoint: boolean;
 }
 
 const defaultValues: CarModalConstructor = {
@@ -21,7 +21,7 @@ const defaultValues: CarModalConstructor = {
     isEditingEstimatedHours: false,
     isEditingActualHours: false,
     isEditingPoint: false,
-}
+};
 
 export class CardModal extends Record(defaultValues) {
 
@@ -104,5 +104,8 @@ export namespace CardModal {
             cardId: !!obj.cardId ? new CardId(obj.cardId) : undefined,
         },
     });
-    export const create = (params: CarModalConstructor): CardModal => new CardModal(params);
+    export const create = (params = {} as CarModalConstructor): CardModal => new CardModal({
+        ...defaultValues,
+        ...params,
+    });
 }

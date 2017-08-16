@@ -35,7 +35,6 @@ export class BoardActionCreator {
 }
 
 class BoardReducer {
-
     public static add(boards: List<Board>, action: AddBoardAction): List<Board> {
         return boards.push(action.payload);
     }
@@ -45,7 +44,7 @@ class BoardReducer {
         return boards.set(index, action.payload);
     }
 
-    public static delete(boards: List<Board>, action: DeleteBoardAction) {
+    public static delete(boards: List<Board>, action: DeleteBoardAction): List<Board> {
         const index = boards.findIndex(board => board.id.equals(action.payload.id));
         return boards.delete(index);
     }

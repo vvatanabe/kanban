@@ -1,50 +1,60 @@
 import { List } from "immutable";
-import * as uuid from "uuid";
-import ActionType from "../constants/ActionType";
-import { Action, Card, CardId } from "../models";
+import { Card, CardId } from "../../../../domain/model";
+import Action from "../Action";
+import { createReducer } from "../createReducer";
+
+export enum CardActionType {
+    AddCard = "ADD_CARD",
+    UpdateCard = "UPDATE_CARD",
+    DeleteCards = "DELETE_CARDS",
+}
+
+interface AddCardAction extends Action<Card> { }
+
+interface UpdateCardAction extends Action<Card> { }
 
 interface DeleteCardsAction extends Action<List<CardId>> { }
 
-export const createCard = (): Action<{}> => ({
-    type: ActionType.CreateCard,
-    payload: {},
+export class CardActionCreator {
+
+    public static add = (card: Card): Action<Card> => ({
+        type: CardActionType.AddCard,
+        payload: card,
+    })
+
+    public static update = (card: Card): Action<Card> => ({
+        type: CardActionType.UpdateCard,
+        payload: card,
+    })
+
+    public static delete = (cardIds: List<CardId>): DeleteCardsAction => ({
+        type: CardActionType.DeleteCards,
+        payload: cardIds,
+    })
+
+}
+
+class CardReducer {
+
+    public static add(cards: List<Card>, action: AddCardAction): List<Card> {
+        return cards.push(action.payload);
+    }
+
+    public static update(cards: List<Card>, action: UpdateCardAction): List<Card> {
+        const index = cards.findIndex(card => card.equals(action.payload));
+        return cards.set(index, action.payload);
+    }
+
+    public static delete(cards: List<Card>, action: DeleteCardsAction) {
+        return cards.filter(card => !action.payload.find(cardId => cardId.equals(card.id))).toList();
+    }
+
+}
+
+const cardReducer = createReducer<List<Card>>(List.of(), {
+    [CardActionType.AddCard]: CardReducer.add,
+    [CardActionType.UpdateCard]: CardReducer.update,
+    [CardActionType.DeleteCards]: CardReducer.delete,
 });
 
-export const updateCard = (card: Card): Action<Card> => ({
-    type: ActionType.UpdateCard,
-    payload: card,
-});
-
-export const deleteCards = (cardId: List<CardId>): DeleteCardsAction => ({
-    type: ActionType.DeleteCards,
-    payload: cardId,
-});
-
-import { List } from "immutable";
-import * as uuid from "uuid";
-import ActionType from "../constants/ActionType";
-import { Action, Card, CardId } from "../models";
-import { createReducer } from "./createReducer";
-
-const createCard = (state: List<Card>, action: Action<{}>): List<Card> => {
-    const card = Card.create({
-        id: CardId.create(uuid.v4()),
-    });
-    return state.push(card);
-};
-
-const deleteCard = (state: List<Card>, action: Action<CardId>): List<Card> => (
-    state.filter(card => !card.id.equals(action.payload)).toList()
-);
-
-const updateCard = (state: List<Card>, action: Action<Card>): List<Card> => (
-    state.map(card => card.equals(action.payload) ? card.copy(action.payload) : card).toList()
-);
-
-const cards = createReducer<List<Card>>(List.of(), {
-    [ActionType.CreateCard]: createCard,
-    [ActionType.UpdateCard]: updateCard,
-    [ActionType.DeleteCard]: deleteCard,
-});
-
-export default cards;
+export default cardReducer;

@@ -1,9 +1,7 @@
 import { injectable } from "inversify";
-import Board from "../../domain/model/board/Board";
-import BoardId from "../../domain/model/board/BoardId";
-import BoardRepository from "../../domain/model/board/BoardRepository";
+import { Board, BoardId, BoardRepository } from "../../domain/model/";
+import { dispatch, getState } from "./redux/ReduxStore";
 import { BoardActionCreator } from "./reduxstore/board";
-import { dispatch } from "./reduxstore/ReduxStore";
 
 @injectable()
 export default class BoardRepositoryOnReduxStore extends BoardRepository {
@@ -19,5 +17,7 @@ export default class BoardRepositoryOnReduxStore extends BoardRepository {
     public delete(boardId: BoardId) {
         dispatch(BoardActionCreator.delete(boardId));
     }
+
+    deleteCardsIn
 
 }

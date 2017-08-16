@@ -5,12 +5,7 @@ import { Action, AppState } from "../../shared/models";
 import { default as Project, DispatchProps, OwnProps, StateProps } from "../components/Project";
 
 const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => ({
-  kanbanBoards: state.kanbanBoards,
-  scrumBoards: state.scrumBoards,
-  orderOfBoards: state.kanbanBoards
-    .concat(state.scrumBoards)
-    .sort((b1, b2) => new Date(b1.date) - new Date(b2.date)),
-
+  boardIds: state.boardIds,
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action<any>>, ownProps: OwnProps): DispatchProps => ({

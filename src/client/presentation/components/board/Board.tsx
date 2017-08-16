@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router";
 import BoardType from "../../shared/constants/BoardType";
 import * as models from "../../shared/models";
 import KanbanBoard from "./board/KanbanBoard";
-import ScrumBoard from "../containers/ScrumBoard";
+import ScrumBoard from "../ScrumBoard";
 
 export interface StateProps {
     board?: models.KanbanBoard | models.ScrumBoard;

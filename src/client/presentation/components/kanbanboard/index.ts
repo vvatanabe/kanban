@@ -1,7 +1,5 @@
-import Board from "../../../../shared/domain/model/board/Board";
-import BoardId from "../../../../shared/domain/model/board/BoardId";
-import CardId from "../../../../shared/domain/model/card/CardId";
-import CoulmnId from "../../../../shared/domain/model/column/ColumnId";
+import { Board, BoardId, CardId, ColumnId } from "../../../../shared/domain/model";
+import { AddCoulmnCommand } from "../../../application/kanbanboard/AddCoulmnCommand";
 import { kanbanBoardCommandService } from "../../../application/kanbanboard/KanbanBoardCommandService";
 import { kanbanBoardQueryService } from "../../../application/kanbanboard/KanbanBoardQueryService";
 import { BindComponentProps } from "../../support";
@@ -12,9 +10,14 @@ const bindStateToProps = (ownProps: OwnProps): StateProps => ({
 });
 
 const bindActionToProps = (ownProps: OwnProps, stateProps: StateProps): ActionProps => ({
-    addNewCoulmn: () => kanbanBoardCommandService.addNewCoulmnToBoard(ownProps.board.id),
-    deleteCoulmn: (coulmnId: CoulmnId) => kanbanBoardCommandService.deleteCoulmnFromBoard(coulmnId, ownProps.board.id),
-    moveCoulmn: (src: CoulmnId, dist: CoulmnId) => kanbanBoardCommandService.moveCoulmnOnBoard(src, dist),
+    addColumn: (name: string) => {
+        const command: AddCoulmnCommand = { name };
+        kanbanBoardCommandService.addColumn(ownProps.board.id, command);
+    },
+    deleteColumn: (coulmnId: ColumnId) => {
+        kanbanBoardCommandService.deleteCoulmn(ownProps.board.id, coulmnId);
+    },
+    moveColumn: (src: ColumnId, dist: ColumnId) => kanbanBoardCommandService.moveCoulmnOnBoard(src, dist),
     openCardModal: (cardId: CardId) => kanbanBoardCommandService.openCardModalOnBoard(cardId),
 });
 

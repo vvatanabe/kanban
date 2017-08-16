@@ -2,40 +2,44 @@ import * as React from "react";
 import { DragDropContext } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
 import TouchBackend from "react-dnd-touch-backend";
+import { CardId, ColumnId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
+import { isMobile } from "../../support";
+import { CardModal } from "../cardmodal";
+import { Column } from "../column";
 
 export interface ActionProps {
-    addNewCoulmn?();
-    deleteCoulmn?(coulmnId: model.ColumnId);
-    moveCoulmn?(src: model.ColumnId, dist: model.ColumnId);
-    openCardModal?(cardId: model.CardId);
+    addColumn?(name: string);
+    deleteColumn?(columnId: ColumnId);
+    moveColumn?(src: ColumnId, dist: ColumnId);
+    openCardModal?(cardId: CardId);
 }
 
 export interface OwnProps extends React.Props<{}> {
-    board: Board;
+    board: model.KanbanBoard;
 }
 
 const KanbanBoard: React.StatelessComponent<OwnProps & ActionProps> = props => (
     <div className="kanban-board">
         <h3>
-            <span className="kanban-board-title">{props.board.name}</span>
+            <span className="kanban-board-name">{props.board.name}</span>
             <button
-                className="add-status-lane-button"
-                onClick={props.addNewStatusLane}>Add Status Lane</button>
+                className="add-column-button"
+                onClick={() => props.addColumn("New Column")}>Add Column</button>
         </h3>
-        <div className="status-lane-list">
-            {props.board.statusLaneIds.map(laneId => (
+        <div className="columns">
+            {props.board.columnIds.map(columnId => (
                 <Column
-                    id={laneId}
-                    key={laneId.value}
+                    id={columnId}
+                    key={columnId.value}
                     openCardModal={props.openCardModal}
-                    deleteStatusLane={props.deleteStatusLane}
-                    moveStatusLane={props.moveStatusLane}
+                    deleteStatusLane={props.deleteColumn}
+                    moveStatusLane={props.moveColumn}
                 />
             ))}
         </div>
         {!!props.board.shouldBeOpenCardModal ? <CardModal context={props.board} data={props.board.cardModal} /> : null}
-    </div>
+    </div >
 );
 
 export default DragDropContext(isMobile ? TouchBackend : HTML5Backend)(KanbanBoard);

@@ -9,7 +9,7 @@ const defaultValues: KanbanBoardConstructor = {
     id: new BoardId(),
     type: BoardType.KanbanBoard,
     name: "",
-    cardModal: CardModal.create({}),
+    cardModal: CardModal.create(),
     editing: false,
     columnIds: List.of(),
 };

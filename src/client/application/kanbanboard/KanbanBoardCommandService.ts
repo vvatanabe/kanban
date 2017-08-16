@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import { injectable } from "inversify";
 
-import { Column, KanbanBoard, KanbanBoardId } from "../../../shared/domain/model";
+import { Column, ColumnId, KanbanBoard, BoardId } from "../../../shared/domain/model";
 import BoardRepository from "../../../shared/domain/model/board/BoardRepository";
 import { lazyInject } from "../../modules/TaskBoardModules";
 import AddKanbanBoardCommand from "./AddKanbanBoardCommand";
@@ -18,19 +18,16 @@ class KanbanBoardCommandService {
     @lazyInject(ColumnRepository)
     private readonly columnRepository: ColumnRepository;
 
-    public addColumn = (command: AddCoulmnCommand) => (boardId: KanbanBoardId) => {
-        const column = new Column({ name: command.name });
+    public addColumn = (boardId: BoardId, command: AddCoulmnCommand) => {
+        const column = Column.create(command.name);
         const addedCoulmn = this.columnRepository.addCoulmn(column);
         this.kanbanBoardRepository.attachCoulmn(boardId, addedCoulmn.id);
-    };
+    }
 
-    // this.dispatch(statusLanesAction.detachStatusLaneFromBoard(this.boardId, laneId));
-    // this.dispatch(statusLanesAction.deleteStatusLane(laneId));
-    // this.dispatch(cardsAction.deleteCards(statusLaneStore.findById(laneId).cardIds));
-    public deleteCoulmnFromBoard(coulmnId: CoulmnId, boardId: BoardId) {
-        boardRepository.detachCoulmn(this.boardId, coulmnId);
-        columnRepository.deleteCoulmn(coulmnId);
-        cardsRepository.deleteCardsByCoulmnId(coulmnId);
+    public deleteCoulmn(boardId: BoardId, columnId: ColumnId) {
+        this.kanbanBoardRepository.detachCoulmn(boardId, columnId);
+        this.columnRepository.deleteCoulmn(columnId);
+        this.cardsRepository.deleteCardsByCoulmnId(columnId);
     }
 
     public moveCoulmnOnBoard(src: CoulmnId, dist: CoulmnId) {
@@ -49,4 +46,4 @@ class KanbanBoardCommandService {
 
 }
 
-export const kanbanBoardApplicationService = new KanbanBoardCommandService();
+export const kanbanBoardCommandService = new KanbanBoardCommandService();

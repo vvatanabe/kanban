@@ -30,8 +30,8 @@ const Project: React.StatelessComponent<Props> = props => (
             <button className="add-list-button" onClick={props.addKanbanBoard}>Add Kanban Bord</button>
         </h3>
         <div className="bord-tile-list">
-            {props.boards.map(board => (
-                <BoardTile id={boardId} deleteBoard={service.deleteBoard} />
+            {props.boarIds.map(board => (
+                <BoardTile id={boardId} deleteBoard={props.deleteBoard} />
             ))}
         </div>
     </div>

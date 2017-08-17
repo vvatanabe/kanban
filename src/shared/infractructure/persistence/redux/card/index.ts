@@ -3,58 +3,36 @@ import { Card, CardId } from "../../../../domain/model";
 import Action from "../Action";
 import { createReducer } from "../createReducer";
 
-export enum CardActionType {
-    AddCard = "ADD_CARD",
-    UpdateCard = "UPDATE_CARD",
-    DeleteCards = "DELETE_CARDS",
-}
+const ADD_CARD = "ADD_CARD";
+const UPDATE_CARD = "UPDATE_CARD";
+const DELETE_CARDS = "DELETE_CARDS";
 
-interface AddCardAction extends Action<Card> { }
-
-interface UpdateCardAction extends Action<Card> { }
-
-interface DeleteCardsAction extends Action<List<CardId>> { }
-
-export class CardActionCreator {
-
-    public static add = (card: Card): Action<Card> => ({
-        type: CardActionType.AddCard,
-        payload: card,
-    })
-
-    public static update = (card: Card): Action<Card> => ({
-        type: CardActionType.UpdateCard,
-        payload: card,
-    })
-
-    public static delete = (cardIds: List<CardId>): DeleteCardsAction => ({
-        type: CardActionType.DeleteCards,
-        payload: cardIds,
-    })
-
-}
-
-class CardReducer {
-
-    public static add(cards: List<Card>, action: AddCardAction): List<Card> {
+export default createReducer<List<Card>>(List.of(), {
+    [ADD_CARD]: (cards: List<Card>, action: AddCardAction): List<Card> => {
         return cards.push(action.payload);
-    }
-
-    public static update(cards: List<Card>, action: UpdateCardAction): List<Card> {
+    },
+    [UPDATE_CARD]: (cards: List<Card>, action: UpdateCardAction): List<Card> => {
         const index = cards.findIndex(card => card.equals(action.payload));
         return cards.set(index, action.payload);
-    }
-
-    public static delete(cards: List<Card>, action: DeleteCardsAction) {
+    },
+    [DELETE_CARDS]: (cards: List<Card>, action: DeleteCardsAction): List<Card> => {
         return cards.filter(card => !action.payload.find(cardId => cardId.equals(card.id))).toList();
-    }
-
-}
-
-const cardReducer = createReducer<List<Card>>(List.of(), {
-    [CardActionType.AddCard]: CardReducer.add,
-    [CardActionType.UpdateCard]: CardReducer.update,
-    [CardActionType.DeleteCards]: CardReducer.delete,
+    },
 });
 
-export default cardReducer;
+type AddCardAction = Action<Card>;
+type UpdateCardAction = Action<Card>;
+type DeleteCardsAction = Action<List<CardId>>;
+
+export const addCard = (card: Card): AddCardAction => ({
+    type: ADD_CARD,
+    payload: card,
+});
+export const updateCard = (card: Card): UpdateCardAction => ({
+    type: UPDATE_CARD,
+    payload: card,
+});
+export const deleteCards = (cardIds: List<CardId>): DeleteCardsAction => ({
+    type: DELETE_CARDS,
+    payload: cardIds,
+});

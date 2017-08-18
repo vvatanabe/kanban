@@ -1,22 +1,24 @@
 import * as React from "react";
+import { DragDropContext } from "react-dnd";
+import HTML5Backend from "react-dnd-html5-backend";
+import TouchBackend from "react-dnd-touch-backend";
 import { RouteComponentProps } from "react-router";
-import BoardType from "../../shared/constants/BoardType";
-import * as models from "../../shared/models";
-import KanbanBoard from "./board/KanbanBoard";
-import ScrumBoard from "../ScrumBoard";
+
+import * as model from "../../../../shared/domain/model";
+import { BoardType } from "../../../../shared/domain/model";
+import { isMobile } from "../../support";
+import KanbanBoard from "../kanbanboard";
+import ScrumBoard from "../scrumboard";
 
 export interface StateProps {
-    board?: models.KanbanBoard | models.ScrumBoard;
+    board?: model.KanbanBoard | model.ScrumBoard;
 }
 
-export interface DispatchProps { }
+export interface OwnProps extends RouteComponentProps<{ id: string }> { }
 
-export interface OwnProps extends RouteComponentProps<{ valueOfBoardId: string }> { }
-
-export type Props = StateProps & DispatchProps & OwnProps;
-
-const Board: React.StatelessComponent<Props> = props => (
-    props.board.type === BoardType.KanbanBoard ? <KanbanBoard board={props.board} /> : <ScrumBoard board={props.board} />
+const Board: React.StatelessComponent<OwnProps & StateProps> = props => (
+    props.board.type === BoardType.KanbanBoard ?
+        <KanbanBoard boardId={props.board} /> : <ScrumBoard board={props.board} />
 );
 
-export default Board;
+export default DragDropContext(isMobile ? TouchBackend : HTML5Backend)(Board);

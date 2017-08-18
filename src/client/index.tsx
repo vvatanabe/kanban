@@ -20,7 +20,6 @@ import Project from "./containers/Project";
 
 import { fetchAppState } from "../shared/actions";
 
-
 const history = createBrowserHistory();
 // const localStore = localforage.createInstance({ name: "taskboard" });
 
@@ -32,7 +31,8 @@ ReactDOM.render(
                     <Header title="WIP - Shared Task Board" />
                     <Switch>
                         <Route exact path="/" render={routeProps => (<Project  {...routeProps} />)} />
-                        <Route path="/board/:bordId" component={Board} />
+                        <Route path="/project/:projectKey" component={Project} />
+                        <Route path="/project/:projectKey/:bordId" component={Board} />
                         <Route component={NotFound} />
                     </Switch>
                 </div>

@@ -101,7 +101,7 @@ const moveCardOnStatusLane = (lanes: List<StatusLane>, action: Action<[CardId, C
         return lanes.set(srcCardIndex, srcLane.copy({
             cardIds: srcLane.cardIds
                 .delete(srcCardIndex) // Delete the card from current position
-                .insert(distCardIndex, srcCardId) // Insert the card to next position
+                .insert(distCardIndex, srcCardId), // Insert the card to next position
         }));
     }
 

@@ -30,6 +30,13 @@ export class KanbanBoard extends Board(defaultValues) {
         return this.merge({ columnIds: this.columnIds.filter(id => !id.equals(columnId)) }) as KanbanBoard;
     }
 
+    public moveCoulmn(srcId: ColumnId, distId: ColumnId): KanbanBoard {
+        const srcIndex = this.columnIds.findIndex(id => id.equals(srcId));
+        const distIndex = this.columnIds.findIndex(id => id.equals(distId));
+        const columnIds = this.columnIds.delete(srcIndex).insert(distIndex, srcId);
+        return this.merge({ columnIds }) as KanbanBoard;
+    }
+
     public equals(obj: any): boolean {
         return obj instanceof KanbanBoard && this.id.equals(obj.id);
     }

@@ -13,7 +13,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => ({
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action<any>>, ownProps: OwnProps): DispatchProps => ({
     scrumBoardDispatcher: new ScrumBoardDispatcher(
-    dispatch, store.getState, BoardId.create(ownProps.match.params.valueOfBoardId))
+        dispatch, store.getState, BoardId.create(ownProps.match.params.valueOfBoardId))
 });
 
 export default connect<StateProps, DispatchProps, OwnProps>(

@@ -1,10 +1,6 @@
 import * as React from "react";
-import { DragDropContext } from "react-dnd";
-import HTML5Backend from "react-dnd-html5-backend";
-import TouchBackend from "react-dnd-touch-backend";
 import { CardId, ColumnId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
-import { isMobile } from "../../support";
 import { CardModal } from "../cardmodal";
 import { Column } from "../column";
 
@@ -33,13 +29,16 @@ const KanbanBoard: React.StatelessComponent<OwnProps & ActionProps> = props => (
                     id={columnId}
                     key={columnId.value}
                     openCardModal={props.openCardModal}
-                    deleteStatusLane={props.deleteColumn}
-                    moveStatusLane={props.moveColumn}
+                    deleteColumn={props.deleteColumn}
+                    moveColumn={props.moveColumn}
                 />
             ))}
         </div>
-        {!!props.board.shouldBeOpenCardModal ? <CardModal context={props.board} data={props.board.cardModal} /> : null}
-    </div >
+        {props.board.shouldBeOpenCardModal
+            ? <CardModal data={props.board.cardModal} />
+            : null
+        }
+    </div>
 );
 
-export default DragDropContext(isMobile ? TouchBackend : HTML5Backend)(KanbanBoard);
+export default KanbanBoard;

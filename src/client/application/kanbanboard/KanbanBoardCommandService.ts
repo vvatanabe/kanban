@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import { injectable } from "inversify";
 
-import { Column, ColumnId, KanbanBoard, BoardId } from "../../../shared/domain/model";
+import { CardId, Column, ColumnId, KanbanBoard, BoardId } from "../../../shared/domain/model";
 import BoardRepository from "../../../shared/domain/model/board/BoardRepository";
 import { lazyInject } from "../../modules/TaskBoardModules";
 import AddKanbanBoardCommand from "./AddKanbanBoardCommand";
@@ -17,6 +17,8 @@ class KanbanBoardCommandService {
     private readonly kanbanBoardRepository: KanbanBoardRepository;
     @lazyInject(ColumnRepository)
     private readonly columnRepository: ColumnRepository;
+    @lazyInject(CardRepository)
+    private readonly cardRepository: CardRepository;
 
     public addColumn = (boardId: BoardId, command: AddCoulmnCommand) => {
         const column = Column.create(command.name);
@@ -27,21 +29,22 @@ class KanbanBoardCommandService {
     public deleteCoulmn(boardId: BoardId, columnId: ColumnId) {
         this.kanbanBoardRepository.detachCoulmn(boardId, columnId);
         this.columnRepository.deleteCoulmn(columnId);
-        this.cardsRepository.deleteCardsByCoulmnId(columnId);
+        this.cardRepository.deleteCardsByCoulmnId(columnId);
     }
 
-    public moveCoulmnOnBoard(src: CoulmnId, dist: CoulmnId) {
-        this.dispatch(statusLanesAction.moveStatusLane(src, dist));
+    public moveCoulmn(boardId: BoardId, src: ColumnId, dist: ColumnId) {
+        const updatedBoard = this.kanbanBoardRepository.findById(boardId).moveCoulmn(src, dist);
+        this.kanbanBoardRepository.update(updatedBoard);
     }
 
-    public openCardModalOnBoard(cardId: CardId, boardId: BoardId) {
-        const boardToUpdate = this.kanbanBoardRepository.findById(boardId).openCardModal(cardId);
-        this.boardRepository.update(boardToUpdate);
+    public openCardModal(boardId: BoardId, cardId: CardId) {
+        const updatedBoard = this.kanbanBoardRepository.findById(boardId).openCardModal(cardId);
+        this.kanbanBoardRepository.update(updatedBoard);
     }
 
-    public closeCardModalOnBoard(cardId: CardId, boardId: BoardId) {
-        const boardToUpdate = this.kanbanBoardRepository.findById(boardId).closeCardModal(cardId);
-        this.boardRepository.update(boardToUpdate);
+    public closeCardModal(boardId: BoardId, cardId: CardId) {
+        const updatedBoard = this.kanbanBoardRepository.findById(boardId).closeCardModal(cardId);
+        this.kanbanBoardRepository.update(updatedBoard);
     }
 
 }

@@ -1,3 +1,3 @@
-export default interface AddKanbanBoardCommand {
+export interface AddKanbanBoardCommand {
     name: string;
 }

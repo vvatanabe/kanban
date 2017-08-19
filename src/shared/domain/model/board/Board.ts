@@ -1,5 +1,5 @@
 import { List, Record } from "immutable";
-import { BoardId, BoardType, CardModal, Entity, EntityConstructor } from "../";
+import { BoardId, BoardType, CardId, CardModal, Entity, EntityConstructor } from "../";
 
 export interface BoardConstructor extends EntityConstructor<BoardId> {
     readonly type: BoardType;
@@ -39,6 +39,16 @@ export const Board = (values: BoardConstructor) => {
 
         public endEditing(): this {
             return this.merge({ editing: false }) as this;
+        }
+
+        public openCardModal(cardId: CardId): this {
+            const cardModal = this.cardModal.open(cardId);
+            return this.merge({ cardModal }) as this;
+        }
+
+        public closeCardModal(): this {
+            const cardModal = this.cardModal.close();
+            return this.merge({ cardModal }) as this;
         }
 
     }

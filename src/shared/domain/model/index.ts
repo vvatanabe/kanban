@@ -4,6 +4,7 @@ export * from "./card/CardRepository";
 export * from "./cardmodal/CardModal";
 export * from "./column/Column";
 export * from "./column/ColumnId";
+export * from "./column/ColumnRepository";
 export * from "./Identifier";
 export * from "./Undefined";
 export * from "./AppState";

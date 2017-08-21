@@ -31,6 +31,12 @@ export class Column extends Entity<ColumnId>(defaultValues) {
     public detachCard(cardId: CardId): Column {
         return this.merge({ cardIds: this.cardIds.filter(id => !id.equals(cardId)) }) as Column;
     }
+    public moveCard(srcId: CardId, distId: CardId): Column {
+        const srcIndex = this.cardIds.findIndex(id => id.equals(srcId));
+        const distIndex = this.cardIds.findIndex(id => id.equals(distId));
+        const cardIds = this.cardIds.delete(srcIndex).insert(distIndex, srcId);
+        return this.merge({ cardIds }) as Column;
+    }
 
     public equals(obj: any): boolean {
         return obj instanceof Column && obj.id.equals(this.id);

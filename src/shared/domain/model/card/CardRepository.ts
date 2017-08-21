@@ -5,5 +5,6 @@ import { Card, CardId, ColumnId } from "../";
 export abstract class CardRepository {
     public abstract add(card: Card);
     public abstract update(card: Card);
+    public abstract delete(cardId: CardId);
     public abstract deleteByColumnId(columnId: ColumnId);
 }

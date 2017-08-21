@@ -11,6 +11,7 @@ export interface OwnProps {
     boardId: models.BoardId;
     cardId?: models.CardId;
     condition: models.CardModal;
+    close();
 }
 
 export interface StateProps {
@@ -24,7 +25,6 @@ export interface StateProps {
 }
 
 export interface DispatchProps {
-    close?();
     update?(card: models.Card);
     showSummaryForm?();
     showDescriptionForm?();

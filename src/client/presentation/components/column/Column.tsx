@@ -4,25 +4,27 @@ import {
     DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor, DragSourceSpec,
     DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
 } from "react-dnd";
-import DnDItemType from "../../shared/constants/DnDItemType";
-import StatusLaneDispatcher from "../dispatchers/CoulmnDispatcher";
-import * as models from "../../shared/models";
-import Card from "../containers/Card";
-import Editer from "./Editer";
+import { CardId, ColumnId } from "../../../../shared/domain/model";
+import * as model from "../../../../shared/domain/model";
 
 export interface StateProps {
-    lane?: models.StatusLane;
+    column?: model.Column;
 }
 
-export interface DispatchProps {
-    statusLaneDispatcher: StatusLaneDispatcher;
+export interface ActionProps {
+    onClickColumnName?();
+    onEditColumnName?(name: string);
+    onHoverCardOverCard?(src: CardId, dist: CardId);
+    onClickAddCardButton?();
+    onClickDeleteCardButton?(cardId: CardId);
+    onHoverCard?(cardId: CardId);
 }
 
 export interface OwnProps {
-    id: models.StatusLaneId;
-    openCardModal(cardId: models.CardId);
-    deleteStatusLane?(laneId: models.StatusLaneId);
-    moveStatusLane?(src: models.StatusLaneId, dist: models.StatusLaneId);
+    id: ColumnId;
+    onClickCard(cardId: CardId);
+    onClickDeleteColumnButton(columnId: ColumnId);
+    onHoverColumn(src: ColumnId, dist: ColumnId);
 }
 
 interface DnDProps {
@@ -32,45 +34,49 @@ interface DnDProps {
     isDragging?: boolean;
 }
 
-type Props = OwnProps & StateProps & DispatchProps & DnDProps & React.Props<{}>;
+type Props = OwnProps & StateProps & ActionProps & DnDProps & React.Props<{}>;
 
 const Coulmn: React.StatelessComponent<Props> = props => {
-    const handleDeleteStatusLane = () => props.deleteStatusLane(props.id);
     return props.connectDragPreview(
         props.connectDropTarget(
-            props.connectDragSource(<div className="list" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
-                <div className="list__header">
-                    <div className="list__header-title">
+            props.connectDragSource(<div className="column" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
+                <div className="column__header">
+                    <div className="column__header-name">
                         <Editer
-                            value={props.lane.name}
-                            onValueClick={props.statusLaneDispatcher.showNameForm}
-                            onEdit={props.statusLaneDispatcher.updateName}
-                            editing={props.lane.editing}
+                            value={props.column.name}
+                            onValueClick={props.onClickColumnName}
+                            onEdit={props.onEditColumnName}
+                            editing={props.column.editing}
                         />
                     </div>
-                    {!props.lane.editing ?
-                        <div className="list__header-button">
+                    {!props.column.editing
+                        ?
+                        <div className="column__header-button">
                             <button
-                                className="delete-list-button"
-                                onClick={handleDeleteStatusLane}
+                                className="delete-column-button"
+                                onClick={() => props.onClickDeleteColumnButton(props.id)}
                             >Delete</button>
                         </div>
-                        : null}
+                        :
+                        null
+                    }
                 </div>
                 <ul className="cards">
-                    {props.lane.cardIds.map(cardId => (
+                    {props.column.cardIds.map(cardId => (
                         <Card
                             id={cardId}
                             key={cardId.value}
-                            onClickCard={props.openCardModal}
-                            onMoveCard={props.statusLaneDispatcher.moveCard}
-                            onDeleteCard={props.statusLaneDispatcher.deleteCard} />
+                            onClickCard={props.onClickCard}
+                            onHoverCard={props.onHoverCardOverCard}
+                            onClickDeleteCardButton={props.onClickDeleteCardButton} />
                     ))}
                 </ul>
-                <button className="add-card-button" onClick={props.statusLaneDispatcher.addNewCard} >
+                <button
+                    className="add-card-button"
+                    onClick={props.onClickAddCardButton} >
                     Add Card
                 </button>
-            </div>,
+            </div >,
             ),
         )
     )
@@ -80,7 +86,7 @@ const Coulmn: React.StatelessComponent<Props> = props => {
 // react-dnd: Drag
 // --------------------------------
 
-interface DnDItem { readonly id: models.StatusLaneId; }
+interface DnDItem { readonly id: ColumnId; }
 
 const listSource: DragSourceSpec<Props> = {
     beginDrag: (props: Props): DnDItem => ({ id: props.lane.id }),
@@ -110,9 +116,9 @@ const listTarget: DropTargetSpec<Props> = {
         const sourceId = (monitor.getItem() as any).id;
         const targetStatusLaneId = targetProps.lane.id;
         if (sourceType === DnDItemType.Card && targetProps.lane.cardIds.length === 0) {
-            targetProps.statusLaneDispatcher.attachCard(sourceId as models.CardId);
+            targetProps.onHoverCard(sourceId as models.CardId);
         } else if (sourceType === DnDItemType.StatusLane && !models.equals(targetStatusLaneId, sourceId)) {
-            targetProps.moveStatusLane(sourceId as models.StatusLaneId, targetStatusLaneId);
+            targetProps.onHoverColumn(sourceId as models.StatusLaneId, targetStatusLaneId);
         }
     },
 };

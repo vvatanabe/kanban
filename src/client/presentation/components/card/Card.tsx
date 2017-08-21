@@ -15,8 +15,8 @@ export interface DispatchProps { }
 export interface OwnProps {
   id: models.CardId;
   onClickCard(cardId: models.CardId);
-  onMoveCard(from: models.CardId, to: models.CardId);
-  onDeleteCard(cardId: models.CardId);
+  onHoverCard(from: models.CardId, to: models.CardId);
+  onClickDeleteCardButton(cardId: models.CardId);
 }
 
 export interface DnDProps {
@@ -33,7 +33,7 @@ const Card: React.StatelessComponent<Props> = props => (
       <li onClick={() => props.onClickCard(props.id)} style={{ opacity: props.isDragging ? 0.4 : 1 }} className="card" >
         <div className="card__title">{props.card.summary}</div>
         <button className="delete-card-button" onClick={e => {
-          props.onDeleteCard(props.id);
+          props.onClickDeleteCardButton(props.id);
           e.stopPropagation();
         }
         }>Delete</button>
@@ -73,13 +73,13 @@ const dragSource = DragSource<Props>(DnDItemType.Card, cardSource, collectDragSo
 // react-dnd: Drop
 // --------------------------------
 
-const cardTarget: DropTargetSpec<Props> = {
-  hover(props: Props, monitor: DropTargetMonitor): void {
-    const targetId = props.id;
+const cardTarget: DropTargetSpec<OwnProps> = {
+  hover(props: OwnProps, monitor: DropTargetMonitor): void {
+    const distId = props.id;
     const item = monitor.getItem() as DnDItem;
-    const sourceId = item.id;
-    if (sourceId.equals(targetId)) {
-      props.onMoveCard(sourceId, targetId);
+    const srcId = item.id;
+    if (!srcId.equals(distId)) {
+      props.onHoverCard(srcId, distId);
     }
   },
 };

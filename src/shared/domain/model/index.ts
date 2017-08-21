@@ -20,3 +20,5 @@ export * from "./project/Project";
 export * from "./project/ProjectId";
 export * from "./status/StatusId";
 export * from "./status/Status";
+export * from "./userstory/UserStory";
+export * from "./userstory/UserStoryId";

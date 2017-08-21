@@ -18,6 +18,9 @@ const bindActionToProps = (ownProps: OwnProps): ActionProps => ({
     openCardModal: (cardId: CardId) => {
         kanbanBoardCommandService.openCardModal(ownProps.board.id, cardId);
     },
+    closeCardModal: () => {
+        kanbanBoardCommandService.closeCardModal(ownProps.board.id);
+    },
 });
 
 export default BindComponentProps(

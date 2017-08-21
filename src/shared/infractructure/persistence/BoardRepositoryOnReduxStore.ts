@@ -17,7 +17,4 @@ export default class BoardRepositoryOnReduxStore extends BoardRepository {
     public delete(boardId: BoardId) {
         dispatch(BoardActionCreator.delete(boardId));
     }
-
-    deleteCardsInColumn
-
 }

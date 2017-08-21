@@ -5,6 +5,7 @@ import { createReducer } from "../createReducer";
 
 const ADD_CARD = "ADD_CARD";
 const UPDATE_CARD = "UPDATE_CARD";
+const DELETE_CARD = "DELETE_CARD";
 const DELETE_CARDS = "DELETE_CARDS";
 
 export default createReducer<List<Card>>(List.of(), {
@@ -15,6 +16,9 @@ export default createReducer<List<Card>>(List.of(), {
         const index = cards.findIndex(card => card.equals(action.payload));
         return cards.set(index, action.payload);
     },
+    [DELETE_CARD]: (cards: List<Card>, action: DeleteCardAction): List<Card> => {
+        return cards.filter(card => !action.payload.equals(card.id)).toList();
+    },
     [DELETE_CARDS]: (cards: List<Card>, action: DeleteCardsAction): List<Card> => {
         return cards.filter(card => !action.payload.find(cardId => cardId.equals(card.id))).toList();
     },
@@ -22,6 +26,7 @@ export default createReducer<List<Card>>(List.of(), {
 
 type AddCardAction = Action<Card>;
 type UpdateCardAction = Action<Card>;
+type DeleteCardAction = Action<CardId>;
 type DeleteCardsAction = Action<List<CardId>>;
 
 export const addCard = (card: Card): AddCardAction => ({
@@ -31,6 +36,10 @@ export const addCard = (card: Card): AddCardAction => ({
 export const updateCard = (card: Card): UpdateCardAction => ({
     type: UPDATE_CARD,
     payload: card,
+});
+export const deleteCard = (cardId: CardId): DeleteCardAction => ({
+    type: DELETE_CARD,
+    payload: cardId,
 });
 export const deleteCards = (cardIds: List<CardId>): DeleteCardsAction => ({
     type: DELETE_CARDS,

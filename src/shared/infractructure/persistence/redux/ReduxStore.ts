@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import { applyMiddleware, compose, createStore, Store } from "redux";
-import AppState from "../../../domain/model/AppState";
-import rootReducer from "./rootReducer";
+import { AppState } from "../../../domain/model";
+import { rootReducer } from "./RootReducer";
 
 const ReduxShareClient = require("redux-share-client");
 

@@ -9,6 +9,7 @@ export interface ActionProps {
     deleteColumn?(columnId: ColumnId);
     moveColumn?(src: ColumnId, dist: ColumnId);
     openCardModal?(cardId: CardId);
+    closeCardModal?();
 }
 
 export interface OwnProps extends React.Props<{}> {
@@ -29,13 +30,14 @@ const KanbanBoard: React.StatelessComponent<OwnProps & ActionProps> = props => (
                     id={columnId}
                     key={columnId.value}
                     openCardModal={props.openCardModal}
+                    closeCardModal={props.closeCardModal}
                     deleteColumn={props.deleteColumn}
                     moveColumn={props.moveColumn}
                 />
             ))}
         </div>
         {props.board.shouldBeOpenCardModal
-            ? <CardModal data={props.board.cardModal} />
+            ? <CardModal data={props.board.cardModal} close={props.closeCardModal} />
             : null
         }
     </div>

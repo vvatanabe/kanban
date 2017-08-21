@@ -20,7 +20,7 @@ class KanbanBoardCommandService {
 
     public addColumn = (boardId: BoardId, command: AddCoulmnCommand) => {
         const column = Column.create(command.name);
-        this.columnRepository.addCoulmn(column);
+        this.columnRepository.add(column);
         const updatedBoard = this.kanbanBoardRepository.find(boardId).attachColumn(column.id);
         this.kanbanBoardRepository.update(updatedBoard);
     }

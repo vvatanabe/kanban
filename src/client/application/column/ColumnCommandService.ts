@@ -4,6 +4,7 @@ import {
 } from "../../../shared/domain/model";
 import { lazyInject } from "../../modules/TaskBoardModules";
 import { AddCardCommand } from "./AddCardCommand";
+import { UpdateColumnCommand } from "./UpdateColumnCommand";
 
 @injectable()
 export class ColumnCommandService {
@@ -14,7 +15,7 @@ export class ColumnCommandService {
     @lazyInject(CardRepository)
     private readonly cardRepository: CardRepository;
 
-    public addCard = (command: AddCardCommand) => (columnId: ColumnId) => {
+    public addCard = (columnId: ColumnId, command: AddCardCommand) => {
         const card = Card.create({
             summary: command.summary,
             description: command.description,
@@ -25,31 +26,36 @@ export class ColumnCommandService {
             point: command.point,
         });
         this.cardRepository.add(card);
-        const updatedColumn = columnRepository.findById(columnId).attachCard(card.id);
+        const updatedColumn = this.columnRepository.find(columnId).attachCard(card.id);
         this.columnRepository.update(updatedColumn);
     }
 
-    public deleteCard(cardId: CardId) {
-        const detachCardFromCoulmnAct = cardsAction.detachCardFromCoulmn(this.id, cardId);
-        const deleteCardAct = cardsAction.deleteCard(cardId);
-        this.dispatch(detachCardFromCoulmnAct);
-        this.dispatch(deleteCardAct);
+    public deleteCard(columnId: ColumnId, cardId: CardId) {
+        const updatedColumn = this.columnRepository.find(columnId).detachCard(cardId);
+        this.columnRepository.update(updatedColumn);
+        this.cardRepository.delete(cardId);
     }
 
-    public attachCard(cardId: CardId) {
-
+    public moveCard(columnId: ColumnId, src: CardId, dist: CardId) {
+        const updatedColumn = this.columnRepository.find(columnId).moveCard(src, dist);
+        this.columnRepository.update(updatedColumn);
     }
 
-    public moveCard(from: CardId, to: CardId) {
-        // TODO
+    public showFormOfColumnName(columnId: ColumnId) {
+        const updatedColumn = this.columnRepository.find(columnId).startEditing();
+        this.columnRepository.update(updatedColumn);
     }
 
-    public showNameForm() {
-        this.dispatch(statusLanesAction.showStatusLaneNameForm(this.statusLaneId));
+    public updateColumn(columnId: ColumnId, command: UpdateColumnCommand) {
+        const updatedColumn = this.columnRepository.find(columnId).updateName(command.name);
+        this.columnRepository.update(updatedColumn);
     }
 
-    public updateName(name: String) {
-        this.dispatch(statusLanesAction.updateStatusLaneName(this.statusLaneId, name));
+    public attachCard(columnId: ColumnId, cardId: CardId) {
+        const updatedColumn = this.columnRepository.find(columnId).attachCard(cardId);
+        this.columnRepository.update(updatedColumn);
     }
 
 }
+
+export const columnCommandService = new ColumnCommandService();

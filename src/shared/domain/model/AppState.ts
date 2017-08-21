@@ -1,10 +1,5 @@
 import { List } from "immutable";
-import Board from "./board/Board";
-import Card from "./card/Card";
-import Status from "./status/Status";
-import StatusLane from "./statuslane/StatusLane";
-import UserStory from "./userStory/UserStory";
-import Column from "./column/Column";
+import { Board, Card, Column, Status, UserStory } from "./";
 
 export interface AppState {
   readonly projects: List<Project>;

@@ -3,20 +3,19 @@ import {
   ConnectDragSource, ConnectDropTarget, DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor,
   DragSourceSpec, DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
 } from "react-dnd";
-import DnDItemType from "../../shared/constants/DnDItemType";
-import * as models from "../../shared/models";
+import { CardId } from "../../../../shared/domain/model";
+import * as model from "../../../../shared/domain/model";
+import { DnDItemType } from "../../constants";
 
 export interface StateProps {
-  card: models.Card;
+  card: model.Card;
 }
 
-export interface DispatchProps { }
-
 export interface OwnProps {
-  id: models.CardId;
-  onClickCard(cardId: models.CardId);
-  onHoverCard(from: models.CardId, to: models.CardId);
-  onClickDeleteCardButton(cardId: models.CardId);
+  id: CardId;
+  onClickCard(cardId: CardId);
+  onHoverCard(hoverCardId: CardId, hoveredCardId: CardId);
+  onClickDeleteCardButton(cardId: CardId);
 }
 
 export interface DnDProps {
@@ -25,7 +24,7 @@ export interface DnDProps {
   isDragging?: boolean;
 }
 
-export type Props = OwnProps & StateProps & DispatchProps & DnDProps & React.Props<{}>;
+export type Props = OwnProps & StateProps & DnDProps & React.Props<{}>;
 
 const Card: React.StatelessComponent<Props> = props => (
   props.connectDragSource(
@@ -43,7 +42,7 @@ const Card: React.StatelessComponent<Props> = props => (
 );
 
 interface DnDItem {
-  id: models.CardId;
+  id: CardId;
 }
 
 // --------------------------------

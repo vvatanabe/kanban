@@ -1,6 +1,6 @@
 import * as React from "react";
-import Writer from "./Writer";
 import Reader from "./Reader";
+import Writer from "./Writer";
 
 interface Props extends React.Props<{}> {
     value: string;

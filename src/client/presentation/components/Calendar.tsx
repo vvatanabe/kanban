@@ -1,10 +1,9 @@
-// const ReactDatePicker = require('react-datepicker').default
 import * as moment from "moment";
 import * as React from "react";
 import { default as ReactDatePicker } from "react-datepicker";
 import Reader from "./Reader";
 
-export interface Props extends React.Props<{}> {
+interface Props extends React.Props<{}> {
     isOpen: boolean;
     selected?: moment.Moment;
     locale?: string;

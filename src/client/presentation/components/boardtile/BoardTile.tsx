@@ -1,39 +1,30 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router";
-import BoardType from "../../shared/constants/BoardType";
-import * as models from "../../shared/models";
-import KanbanBoard from "./board/KanbanBoard";
-import ScrumBoard from "../containers/ScrumBoard";
-
-export interface StateProps {
-    board: BoardId;
-}
-
-export interface ActionProps {
-    showFormOfBoardName();
-    updateFormOfBoardName(value: string);
-}
+import { BoardId, KanbanBoard, ScrumBoard } from "../../../../shared/domain/model";
+import Editer from "../Editer";
 
 export interface OwnProps extends React.Props<{}> {
-    board: Board;
-    deleteBoard(boardId: BoardId);
+    board: KanbanBoard | ScrumBoard;
+    // () => props.history.push(`/board/${props.id.value}`)
+    onClickBoardTile(boardId: BoardId);
+    onClickBoardName(boardId: BoardId);
+    onEditBoardName(boardId: BoardId, value: string);
+    onClickDeleteBoardButton(boardId: BoardId);
 }
 
-export type Props = StateProps & DispatchProps & OwnProps;
-
-const BoardTile: React.StatelessComponent<Props> = props => (
-    <div className="bord-tile" key={board.id.value} onClick={() => props.history.push(`/board/${board.id.value}`)}>
-        <div className="bord-tile__header" onClick={e => e.stopPropagation()}>
-            <div className="bord-tile__header__title">
+const BoardTile: React.StatelessComponent<OwnProps> = props => (
+    <div className="board-tile" onClick={() => props.onClickBoardTile(props.board.id)}>
+        <div className="board-tile__header" onClick={e => e.stopPropagation()}>
+            <div className="board-tile__header__title">
                 <Editer
                     value={props.board.name}
-                    onValueClick={props.openFormOfBoardName}
-                    onEdit={props.updateFormOfBoardName}
+                    onValueClick={() => props.onClickBoardName(props.board.id)}
+                    onEdit={value => props.onEditBoardName(props.board.id, value)}
                     editing={props.board.editing}
                 />
             </div>
-            <div className="bord-tile__header__button">
-                <button className="delete-bord-button" onClick={() => props.deleteBoard(props.id)}>Delete</button>
+            <div className="board-tile__header__button">
+                <button className="delete-bord-button"
+                    onClick={() => props.onClickDeleteBoardButton(props.board.id)}>Delete</button>
             </div>
         </div>
     </div>

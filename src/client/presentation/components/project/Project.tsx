@@ -6,6 +6,7 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import ProjectApplicationService from "../../application/project/ProjectApplicationService";
 import * as models from "../../shared/models";
+import BoardTile from "../boardtile";
 import Board from "../containers/Board";
 import Editer from "./Editer";
 
@@ -31,7 +32,13 @@ const Project: React.StatelessComponent<Props> = props => (
         </h3>
         <div className="bord-tile-list">
             {props.boards.map(board => (
-                <BoardTile id={boardId} deleteBoard={props.deleteBoard} />
+                <BoardTile
+                    board={board}
+                    onClickBoardTile={}
+                    onClickBoardName={}
+                    onEditBoardName={}
+                    onClickDeleteBoardButton={props.deleteBoard}
+                />
             ))}
         </div>
     </div>

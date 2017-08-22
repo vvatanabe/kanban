@@ -18,7 +18,7 @@ export interface OwnProps extends RouteComponentProps<{ id: string }> { }
 
 const Board: React.StatelessComponent<OwnProps & StateProps> = props => (
     props.board.type === BoardType.KanbanBoard ?
-        <KanbanBoard boardId={props.board} /> : <ScrumBoard board={props.board} />
+        <KanbanBoard board={props.board} /> : <ScrumBoard board={props.board} />
 );
 
 export default DragDropContext(isMobile ? TouchBackend : HTML5Backend)(Board);

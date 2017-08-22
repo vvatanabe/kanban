@@ -1,7 +1,7 @@
-import * as React from 'react';
-import * as Select from 'react-select';
+import * as React from "react";
+import * as Select from "react-select";
 
-interface SelectorProps extends React.Props<{}> {
+interface Props extends React.Props<{}> {
     id: string;
     isEdit: boolean;
     placeholder: string;
@@ -11,7 +11,7 @@ interface SelectorProps extends React.Props<{}> {
     onValueClick(id: string);
 }
 
-const Selector: React.StatelessComponent<SelectorProps> = props => {
+const Selector: React.StatelessComponent<Props> = props => {
 
     const handleOnChange = (option: Select.Option) => {
         if (!props.defaultOption || option.value !== props.defaultOption.value) {
@@ -47,9 +47,9 @@ const Selector: React.StatelessComponent<SelectorProps> = props => {
         />
         :
         <span onClick={() => props.onValueClick(props.id)}>
-            {props.defaultOption ? props.defaultOption.label : 'none'}
+            {props.defaultOption ? props.defaultOption.label : "none"}
         </span>
     );
-}
+};
 
 export default Selector;

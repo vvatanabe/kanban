@@ -1,3 +1,3 @@
-export default interface AddScrumBoardCommand {
+export interface AddScrumBoardCommand {
     name: string;
 }

@@ -4,7 +4,6 @@ import Editer from "../Editer";
 
 export interface OwnProps extends React.Props<{}> {
     board: KanbanBoard | ScrumBoard;
-    // () => props.history.push(`/board/${props.id.value}`)
     onClickBoardTile(boardId: BoardId);
     onClickBoardName(boardId: BoardId);
     onEditBoardName(boardId: BoardId, value: string);

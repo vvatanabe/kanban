@@ -11,21 +11,21 @@ import BoardTile from "../boardtile";
 import Editer from "../Editer";
 
 export interface StateProps {
-    boards?: List<model.KanbanBoard | model.ScrumBoard>;
+    project: model.Project;
 }
 
 export interface ActionProps {
-    onClickAddScrumBoardButton?();
-    onClickAddKanbanBoardButton?();
-    onClickBoardTile?(boardId: BoardId);
-    onClickBoardName?(boardId: BoardId);
-    onEditBoardName?(boardId: BoardId, value: string);
-    onClickDeleteBoardButton?(boardId: BoardId);
+    onClickAddScrumBoardButton();
+    onClickAddKanbanBoardButton();
+    onClickBoardTile(boardId: BoardId);
+    onClickBoardName(boardId: BoardId);
+    onEditBoardName(boardId: BoardId, value: string);
+    onClickDeleteBoardButton(boardId: BoardId);
 }
 
-export type OwnProps = RouteComponentProps<{}>;
+export type OwnProps = RouteComponentProps<{ id: string }>;
 
-export type Props = OwnProps & StateProps & ActionProps & React.Props<{}>;
+export type Props = OwnProps & StateProps & ActionProps;
 
 const Project: React.StatelessComponent<Props> = props => (
     <div>
@@ -35,9 +35,9 @@ const Project: React.StatelessComponent<Props> = props => (
             <button className="add-kanban-board-button" onClick={props.onClickAddKanbanBoardButton}>Add Kanban Bord</button>
         </h3>
         <div className="bord-tile-list">
-            {props.boards.map(board => (
+            {props.project.boardIds.map(id => (
                 <BoardTile
-                    board={board}
+                    id={id}
                     onClickBoardTile={props.onClickBoardTile}
                     onClickBoardName={props.onClickBoardName}
                     onEditBoardName={props.onEditBoardName}

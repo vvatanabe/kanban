@@ -8,7 +8,7 @@ import { AddKanbanBoardCommand } from "./AddKanbanBoardCommand";
 import { AddScrumBoardCommand } from "./AddScrumBoardCommand";
 
 @injectable()
-export default class ProjectCommandService {
+class ProjectCommandService {
 
     @lazyInject(BoardRepository)
     private readonly boardRepository: BoardRepository;

@@ -3,7 +3,7 @@ import { BoardId, KanbanBoard, ScrumBoard } from "../../../../shared/domain/mode
 import Editer from "../Editer";
 
 export interface OwnProps extends React.Props<{}> {
-    board: KanbanBoard | ScrumBoard;
+    id: BoardId;
     onClickBoardTile(boardId: BoardId);
     onClickBoardName(boardId: BoardId);
     onEditBoardName(boardId: BoardId, value: string);

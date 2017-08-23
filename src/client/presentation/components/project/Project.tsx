@@ -34,7 +34,7 @@ const Project: React.StatelessComponent<Props> = props => (
             <button className="add-scrum-board-button" onClick={props.onClickAddScrumBoardButton}>Add Scrum Bord</button>
             <button className="add-kanban-board-button" onClick={props.onClickAddKanbanBoardButton}>Add Kanban Bord</button>
         </h3>
-        <div className="bord-tile-list">
+        <div className="board-tiles">
             {props.project.boardIds.map(id => (
                 <BoardTile
                     id={id}

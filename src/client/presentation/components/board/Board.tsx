@@ -3,7 +3,6 @@ import { DragDropContext } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
 import TouchBackend from "react-dnd-touch-backend";
 import { RouteComponentProps } from "react-router";
-
 import * as model from "../../../../shared/domain/model";
 import { BoardType } from "../../../../shared/domain/model";
 import { isMobile } from "../../support";

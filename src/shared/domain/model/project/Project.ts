@@ -2,17 +2,20 @@ import { List } from "immutable";
 import { BoardId, Entity, EntityConstructor, ProjectId } from "../";
 
 export interface ProjectConstructor extends EntityConstructor<ProjectId> {
+    readonly name: String;
     readonly boardIds: List<BoardId>;
 }
 
 const defaultValues: ProjectConstructor = {
     id: new ProjectId(),
+    name: "",
     editing: false,
     boardIds: List.of(),
 };
 
 export class Project extends Entity<ProjectId>(defaultValues) {
 
+    get name(): string { return this.get("name"); }
     get boardIds(): List<ProjectId> { return this.get("boardIds"); }
 
     constructor(params: ProjectConstructor) {

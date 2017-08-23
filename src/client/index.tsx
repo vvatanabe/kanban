@@ -1,24 +1,19 @@
 import { List } from "immutable";
-import "isomorphic-fetch";
+import 'isomorphic-fetch';
 // import * as localforage from "localforage";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Provider } from "react-redux";
-import "reflect-metadata";
-import * as uuid from "uuid";
-import * as models from "../shared/models";
+import 'reflect-metadata';
+import * as uuid from 'uuid';
+import * as models from '../shared/models';
 import store from "./store";
 
 import createBrowserHistory from "history/createBrowserHistory";
 import { Router } from "react-router";
 import { Switch } from "react-router";
 import { Link, Route } from "react-router-dom";
-import Header from "./components/Header";
-import NotFound from "./components/NotFound";
-import Board from "./containers/Board";
-import Project from "./containers/Project";
-
-import { fetchAppState } from "../shared/actions";
+import DashBoard from "./presentation/components/dashboard";
 
 const history = createBrowserHistory();
 // const localStore = localforage.createInstance({ name: "taskboard" });
@@ -30,9 +25,9 @@ ReactDOM.render(
                 <div className="backlog-kanban">
                     <Header title="WIP - Shared Task Board" />
                     <Switch>
-                        <Route exact path="/" render={routeProps => (<Project  {...routeProps} />)} />
-                        <Route path="/project/:projectKey" component={Project} />
-                        <Route path="/project/:projectKey/:bordId" component={Board} />
+                        <Route exact path="/" render={routeProps => (<DashBoard  {...routeProps} />)} />
+                        <Route path="/projects/:projectId" component={Project} />
+                        <Route path="/projects/:projectId/boards/:boardId" component={Board} />
                         <Route component={NotFound} />
                     </Switch>
                 </div>

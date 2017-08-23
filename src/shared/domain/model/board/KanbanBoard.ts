@@ -59,5 +59,8 @@ export namespace KanbanBoard {
         id: new BoardId(obj.id),
         columnIds: List.of(obj.columnIds.map(id => new KanbanBoard(id))),
     });
-    export const create = (name: string): KanbanBoard => new KanbanBoard({ ...defaultValues, ...{ name } });
+    export const create = (name: string): KanbanBoard => new KanbanBoard({
+        ...defaultValues,
+        ...{ name },
+    });
 }

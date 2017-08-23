@@ -4,6 +4,7 @@ import { BoardId, Entity, EntityConstructor, ProjectId } from "../";
 export interface ProjectConstructor extends EntityConstructor<ProjectId> {
     readonly name: String;
     readonly boardIds: List<BoardId>;
+    readonly archived: boolean;
 }
 
 const defaultValues: ProjectConstructor = {
@@ -11,6 +12,7 @@ const defaultValues: ProjectConstructor = {
     name: "",
     editing: false,
     boardIds: List.of(),
+    archived: false,
 };
 
 export class Project extends Entity<ProjectId>(defaultValues) {
@@ -20,6 +22,14 @@ export class Project extends Entity<ProjectId>(defaultValues) {
 
     constructor(params: ProjectConstructor) {
         super(params);
+    }
+
+    public updateName(name: string): Project {
+        return this.merge({ name }) as Project;
+    }
+
+    public archiving(): Project {
+        return this.merge({ archived: true }) as Project;
     }
 
     public equals(obj: any): boolean {
@@ -46,5 +56,9 @@ export namespace Project {
             id: new ProjectId(obj.id),
             boardIds: List(obj.boardIds.map(boardId => new BoardId(boardId))),
         },
+    });
+    export const create = (name: string): Project => new Project({
+        ...defaultValues,
+        ...{ name },
     });
 }

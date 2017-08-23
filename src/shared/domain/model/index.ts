@@ -18,6 +18,7 @@ export * from "./board/KanbanBoard";
 export * from "./board/KanbanBoardRepository";
 export * from "./project/Project";
 export * from "./project/ProjectId";
+export * from "./project/ProjectRepository";
 export * from "./status/StatusId";
 export * from "./status/Status";
 export * from "./userstory/UserStory";

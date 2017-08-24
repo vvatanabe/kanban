@@ -3,7 +3,7 @@ import { getState } from "../../../shared/infractructure/persistence/redux/Redux
 
 class CardQueryService {
 
-    public viewCard(cardId: CardId): Card {
+    public findCard(cardId: CardId): Card {
         return getState().cards.find(card => card.id.equals(cardId));
     }
 

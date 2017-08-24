@@ -6,7 +6,7 @@ import { BindComponentProps } from "../../support";
 import { default as Card, OwnProps, StateProps } from "./Card";
 
 const bindStateToProps = (ownProps: OwnProps): StateProps => ({
-    card: cardQueryService.viewCard(ownProps.id),
+    card: cardQueryService.findCard(ownProps.id),
 });
 
 export default BindComponentProps(bindStateToProps)(Card);

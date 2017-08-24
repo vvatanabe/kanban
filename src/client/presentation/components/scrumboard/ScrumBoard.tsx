@@ -1,50 +1,48 @@
 import * as React from "react";
-import { DragDropContext } from "react-dnd";
-import HTML5Backend from "react-dnd-html5-backend";
-import TouchBackend from "react-dnd-touch-backend";
-import { RouteComponentProps } from "react-router";
-import * as models from "../../shared/models";
-import CardModal from "../containers/CardModal";
-import UserStoryLane from "../containers/UserStoryLane";
-import ScrumBoardDispatcher from "../dispatchers/ScrumBoardDispatcher";
+import { CardId, UserStoryId } from "../../../../shared/domain/model";
+import * as model from "../../../../shared/domain/model";
+import CardModal from "../cardmodal";
+import UserStory from "../userstory";
 
-export interface StateProps { }
-
-export interface DispatchProps {
-    scrumBoardDispatcher?: ScrumBoardDispatcher;
+export interface OwnProps extends React.Props<{}> {
+    board?: model.ScrumBoard;
 }
 
-export interface OwnProps {
-    board: models.Board;
+export interface ActionProps {
+    addUserStory?();
+    deleteUserStory?(id: UserStoryId);
+    moveUserStory?(src: UserStoryId, dist: UserStoryId);
+    openCardModal?(cardId: CardId);
+    closeCardModal?();
 }
 
-export type Props = StateProps & DispatchProps & OwnProps & React.Props<{}>;
+export type Props = OwnProps & ActionProps;
 
 const ScrumBoard: React.StatelessComponent<Props> = props => (
     <div className="scrum-board">
         <h3>
             <span className="scrum-board-title">{props.board.name}</span>
             <button
-                className="add-story-lane-button"
-                onClick={props.scrumBoardDispatcher.addNewStoryLane} >
-                Add Story Lane
+                className="add-user-story-button"
+                onClick={props.addUserStory} >
+                Add User Story
             </button>
         </h3>
-        <div className="story-lane-list">
-            {props.board.storyLaneIds.map(storyLaneId => (
-                <UserStoryLane
-                    id={storyLaneId}
-                    key={"storyLaneId.value"}
-                    deleteStoryLane={props.scrumBoardDispatcher.deleteStoryLane}
-                    moveStoryLane={props.scrumBoardDispatcher.moveStoryLane}
+        <div className="user-stories">
+            {props.board.userStoryIds.map(userStoryId => (
+                <UserStory
+                    id={userStoryId}
+                    key={userStoryId.value}
+                    onClickDeleteUserStoryButton={props.deleteUserStory}
+                    onHoverUserStory={props.moveUserStory}
                 />
             ))}
         </div>
-        {!!props.board.cardModal ? <CardModal boardId={props.board.id} data={props.board.cardModal} /> : null}
+        {props.board.shouldBeOpenCardModal
+            ? <CardModal data={props.board.cardModal} close={props.closeCardModal} />
+            : null
+        }
     </div>
 )
 
-const isMobile = navigator.userAgent
-    .match(/(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i) !== null;
-
-export default DragDropContext(isMobile ? TouchBackend : HTML5Backend)(ScrumBoard);
+export default ScrumBoard;

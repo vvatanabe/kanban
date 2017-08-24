@@ -15,7 +15,7 @@ interface Params {
     editing?: boolean;
 }
 
-export class StoryLane implements Entity<StoryLaneId> {
+export class UserStory implements Entity<StoryLaneId> {
 
     public static create({
         id = new Undefined(),

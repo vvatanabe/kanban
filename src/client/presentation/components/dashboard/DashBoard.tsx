@@ -6,6 +6,8 @@ import { Project, ProjectId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
 import ProjectTile from "../projecttile";
 
+export interface OwnProps extends RouteComponentProps<{ projectId: string }> { }
+
 export interface StateProps {
     projects: List<Project>;
 }
@@ -17,8 +19,6 @@ export interface ActionProps {
     updateProjectName(id: ProjectId, value: string);
     archivingProject(id: ProjectId);
 }
-
-export type OwnProps = RouteComponentProps<{ projectId: string }>;
 
 export type Props = OwnProps & StateProps & ActionProps;
 

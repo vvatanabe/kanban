@@ -5,7 +5,9 @@ import { getState } from "../../../shared/infractructure/persistence/redux/Redux
 class BoardQueryService {
 
     public viewBoard(boardId: BoardId): KanbanBoard | ScrumBoard {
-        return getState().boards.find(board => board.id.equals(boardId));
+        return getState().kanbnaBoards
+            .concat(getState().scrumBoards)
+            .find(board => board.id.equals(boardId));
     }
 
 }

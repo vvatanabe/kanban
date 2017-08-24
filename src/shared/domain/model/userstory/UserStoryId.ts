@@ -1,4 +1,4 @@
-import { Identifier } from "./Identifier";
+import { Identifier } from "../";
 
 export class UserStoryId implements Identifier<string> {
     constructor(

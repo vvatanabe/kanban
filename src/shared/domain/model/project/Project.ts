@@ -19,6 +19,7 @@ export class Project extends Entity<ProjectId>(defaultValues) {
 
     get name(): string { return this.get("name"); }
     get boardIds(): List<ProjectId> { return this.get("boardIds"); }
+    get archived(): boolean { return this.get("archived"); }
 
     constructor(params: ProjectConstructor) {
         super(params);

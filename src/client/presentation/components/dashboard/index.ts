@@ -6,7 +6,7 @@ import { BindComponentProps } from "../../support";
 import { ActionProps, default as DashBoard, OwnProps, StateProps } from "./DashBoard";
 
 const bindStateToProps = (ownProps: OwnProps) => ({
-    project: dashBoardQueryService.viewProject(new ProjectId(ownProps.match.params.p)),
+    projects: dashBoardQueryService.viewDashBoard(new ProjectId(ownProps.match.params.p)),
 });
 
 const bindActionToProps = (ownProps: OwnProps): ActionProps => ({

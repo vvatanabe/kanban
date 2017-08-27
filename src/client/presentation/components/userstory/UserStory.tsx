@@ -1,24 +1,27 @@
-import * as React from 'react';
+import * as React from "react";
 import {
     ConnectDragPreview, ConnectDragSource, ConnectDropTarget,
-    DragSource, DragSourceSpec, DragSourceMonitor, DragSourceConnector, DragSourceCollector,
-    DropTarget, DropTargetSpec, DropTargetMonitor, DropTargetConnector, DropTargetCollector
-} from 'react-dnd';
+    DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor, DragSourceSpec,
+    DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
+} from "react-dnd";
+import { CardId, UserStoryId } from "../../../../shared/domain/model";
+import * as model from "../../../../shared/domain/model";
+import Editer from "../Editer";
 
-import Card from '../containers/Card';
-import StatusLane from '../containers/StatusLane';
-import Editer from './Editer';
-
-import * as models from '../../shared/models';
-import StoryLaneDispatcher from '../../shared/dispatchers/StoryLaneDispatcher';
-import DnDItemType from '../../shared/constants/DnDItemType';
-
-export interface StateProps {
-    storyLane?: models.StoryLane;
+export interface OwnProps {
+    id: UserStoryId;
+    onClickCard(cardId: CardId);
+    onClickDeleteUserStoryButton(id: UserStoryId);
+    onHoverUserStory(src: UserStoryId, dist: UserStoryId);
 }
 
-export interface DispatchProps {
-    storyLaneDispatcher: StoryLaneDispatcher
+export interface StateProps {
+    userStory?: model.UserStory;
+}
+
+export interface ActionProps extends React.Props<{}> {
+    showFormOfUserStoryName?();
+    updateUserStoryName?(name: string);
 }
 
 export interface DnDProps {
@@ -28,57 +31,49 @@ export interface DnDProps {
     isDragging?: boolean;
 }
 
-export interface OwnProps {
-    id: models.StoryLaneId;
-    deleteStoryLane(laneId: models.StoryLaneId);
-    moveStoryLane(from: models.StoryLaneId, to: models.StoryLaneId);
-    openCardModal(cardId: models.CardId);
-}
+export type Props = OwnProps & StateProps & ActionProps & DnDProps;
 
-export type Props = OwnProps
-    & StateProps
-    & DispatchProps
-    & DnDProps
-    & React.Props<{}>;
-
-const UserStoryLane: React.StatelessComponent<Props> = props => {
-
+const connectDnDComponent = (component: React.ReactElement<{}>) => (props: Props) => {
     return props.connectDragPreview(
         props.connectDropTarget(
-            props.connectDragSource(<div className="storylane" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
-                <div className="storylane__header">
-                    <div className="storylane__header-title">
-                        <Editer
-                            value={props.storyLane.summary}
-                            onValueClick={props.onShowStoryCardSummaryForm}
-                            onEdit={props.updateCard}
-                            editing={props.storyLane.editing}
-                        />
-                    </div>
-                    {!props.storyCard.editing ?
-                        <div className="list__header-button">
-                            <button
-                                className="delete-list-button"
-                                onClick={deleteStatusLane}
-                            >Delete</button>
-                            <button
-                                className="add-card-button"
-                                onClick={handleCreateCard}
-                            >Add Card</button>
-                        </div>
-                        : null}
+            props.connectDragSource(component),
+        ),
+    );
+};
+
+const UserStoryLane: React.StatelessComponent<Props> = props => connectDnDComponent(
+    <div className="user-story" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
+        <div className="user-story__header">
+            <div className="user-story__header-title">
+                <Editer
+                    value={props.userStory.summary}
+                    onValueClick={props.showFormOfUserStoryName}
+                    onEdit={props.updateUserStoryName}
+                    editing={props.userStory.editing}
+                />
+            </div>
+            {!props.userStory.editing
+                ?
+                <div className="user-story__header-button">
+                    <button
+                        className="delete-user-story-button"
+                        onClick={() => props.onClickDeleteUserStoryButton(props.id)}
+                    >Delete</button>
                 </div>
-                // TODO StatusLane has to become component.
-                <ul className="statuses">{props.storyLane.statusLaneIds.map(statusLaneId => (
-                    <StatusLane
-                        id={statusLaneId}
-                        openCardModal={props.openCardModal}
-                    />
-                ))}</ul>
-            </div>)
-        )
-    )
-}
+                :
+                null
+            }
+        </div>
+        <ul className="statuses">
+            {props.userStory.statusLaneIds.map(statusLaneId => (
+                <StatusLane
+                    id={statusLaneId}
+                    openCardModal={props.openCardModal}
+                />
+            ))}
+        </ul>
+    </div>,
+)(props);
 
 // --------------------------------
 // react-dnd: Drag Setting

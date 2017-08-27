@@ -47,48 +47,46 @@ const connectDnDComponent = (component: React.ReactElement<{}>) => (props: Props
     );
 };
 
-const Coulmn: React.StatelessComponent<Props> = props => {
-    return connectDnDComponent(
-        <div className="column" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
-            <div className="column__header">
-                <div className="column__header-name">
-                    <Editer
-                        value={props.column.name}
-                        onValueClick={props.onClickColumnName}
-                        onEdit={props.onEditColumnName}
-                        editing={props.column.editing}
-                    />
-                </div>
-                {!props.column.editing
-                    ?
-                    <div className="column__header-button">
-                        <button
-                            className="delete-column-button"
-                            onClick={() => props.onClickDeleteColumnButton(props.id)}
-                        >Delete</button>
-                    </div>
-                    :
-                    null
-                }
+const Coulmn: React.StatelessComponent<Props> = props => connectDnDComponent(
+    <div className="column" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
+        <div className="column__header">
+            <div className="column__header-name">
+                <Editer
+                    value={props.column.name}
+                    onValueClick={props.onClickColumnName}
+                    onEdit={props.onEditColumnName}
+                    editing={props.column.editing}
+                />
             </div>
-            <ul className="cards">
-                {props.column.cardIds.map(cardId => (
-                    <Card
-                        id={cardId}
-                        key={cardId.value}
-                        onClickCard={props.onClickCard}
-                        onHoverCard={props.onHoverCardOverCardInColumn}
-                        onClickDeleteCardButton={props.onClickDeleteCardButton} />
-                ))}
-            </ul>
-            <button
-                className="add-card-button"
-                onClick={props.onClickAddCardButton} >
-                Add Card
+            {!props.column.editing
+                ?
+                <div className="column__header-button">
+                    <button
+                        className="delete-column-button"
+                        onClick={() => props.onClickDeleteColumnButton(props.id)}
+                    >Delete</button>
+                </div>
+                :
+                null
+            }
+        </div>
+        <ul className="cards">
+            {props.column.cardIds.map(cardId => (
+                <Card
+                    id={cardId}
+                    key={cardId.value}
+                    onClickCard={props.onClickCard}
+                    onHoverCard={props.onHoverCardOverCardInColumn}
+                    onClickDeleteCardButton={props.onClickDeleteCardButton} />
+            ))}
+        </ul>
+        <button
+            className="add-card-button"
+            onClick={props.onClickAddCardButton} >
+            Add Card
                 </button>
-        </div >,
-    )(props);
-};
+    </div >,
+)(props);
 
 // --------------------------------
 // react-dnd: Drag

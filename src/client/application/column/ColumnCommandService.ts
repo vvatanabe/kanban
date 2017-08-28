@@ -4,10 +4,12 @@ import {
 } from "../../../shared/domain/model";
 import { lazyInject } from "../../modules/TaskBoardModules";
 import { AddCardCommand } from "./AddCardCommand";
+import { ColumnCard } from "./ColumnCard";
 import { UpdateColumnCommand } from "./UpdateColumnCommand";
+import { CardId } from '../../../shared/domain/model/card/CardId';
 
 @injectable()
-export class ColumnCommandService {
+class ColumnCommandService {
 
     @lazyInject(ColumnRepository)
     private readonly columnRepository: ColumnRepository;
@@ -36,9 +38,16 @@ export class ColumnCommandService {
         this.cardRepository.delete(cardId);
     }
 
-    public moveCard(columnId: ColumnId, src: CardId, dist: CardId) {
-        const updatedColumn = this.columnRepository.find(columnId).moveCard(src, dist);
-        this.columnRepository.update(updatedColumn);
+    public moveCard(src: ColumnCard, dist: ColumnCard) {
+        if (src.columnId.equals(dist.columnId)) {
+            const moved = this.columnRepository.find(src.columnId).moveCard(src.cardId, dist.cardId);
+            this.columnRepository.update(moved);
+        } else {
+            const detached = this.columnRepository.find(src.columnId).detachCard(src.cardId);
+            const attached = this.columnRepository.find(dist.columnId).attachCard(dist.cardId);
+            this.columnRepository.update(detached);
+            this.columnRepository.update(attached);
+        }
     }
 
     public showFormOfColumnName(columnId: ColumnId) {

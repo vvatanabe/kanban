@@ -1,6 +1,6 @@
 import { Identifier } from "../Identifier";
 
-export default class StatusLaneId implements Identifier<string> {
+export class StatusLaneId implements Identifier<string> {
 
     public static create(value: string): StatusLaneId {
         return new StatusLaneId(value);

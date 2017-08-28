@@ -1,20 +1,24 @@
+
 import * as React from "react";
 import {
   ConnectDragSource, ConnectDropTarget, DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor,
   DragSourceSpec, DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
 } from "react-dnd";
-import { CardId } from "../../../../shared/domain/model";
+import { CardId, ColumnId, StatusLaneId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
 import { DnDItemType } from "../../constants";
+import { ColumnConstructor } from '../../../../shared/domain/model/column/Column';
+import { StatusLaneId } from '../../../../shared/domain/model/statuslane/StatusLaneId';
 
 export interface StateProps {
-  card: model.Card;
+  card?: model.Card;
 }
 
 export interface OwnProps {
   id: CardId;
+  parentId: ColumnId | StatusLaneId;
   onClickCard(cardId: CardId);
-  onHoverCard(hoverCardId: CardId, hoveredCardId: CardId);
+  onHoverCard(hoverCardId: CardId, hoverCardParentId: ColumnId | StatusLaneId, beHoveredCardId: CardId);
   onClickDeleteCardButton(cardId: CardId);
 }
 
@@ -42,7 +46,8 @@ const Card: React.StatelessComponent<Props> = props => (
 );
 
 interface DnDItem {
-  id: CardId;
+  cardId: CardId;
+  parentId: ColumnId | StatusLaneId;
 }
 
 // --------------------------------
@@ -51,10 +56,11 @@ interface DnDItem {
 
 const cardSource: DragSourceSpec<Props> = {
   beginDrag: (props: Props): DnDItem => ({
-    id: props.id,
+    cardId: props.id,
+    parentId: props.parentId,
   }),
   isDragging: (props: Props, monitor: DragSourceMonitor): boolean => (
-    props.id.equals((monitor.getItem() as DnDItem).id)
+    props.id.equals((monitor.getItem() as DnDItem).cardId)
   ),
 };
 
@@ -74,11 +80,10 @@ const dragSource = DragSource<Props>(DnDItemType.Card, cardSource, collectDragSo
 
 const cardTarget: DropTargetSpec<OwnProps> = {
   hover(props: OwnProps, monitor: DropTargetMonitor): void {
-    const distId = props.id;
-    const item = monitor.getItem() as DnDItem;
-    const srcId = item.id;
-    if (!srcId.equals(distId)) {
-      props.onHoverCard(srcId, distId);
+    const beHoveredCardId = props.id;
+    const hover = monitor.getItem() as DnDItem;
+    if (!hover.cardId.equals(beHoveredCardId)) {
+      props.onHoverCard(hover.cardId, hover.parentId, beHoveredCardId);
     }
   },
 };

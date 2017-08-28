@@ -4,24 +4,20 @@ import {
     DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor, DragSourceSpec,
     DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
 } from "react-dnd";
-import DnDItemType from "../../shared/constants/DnDItemType";
-import StatusLaneDispatcher from "../../shared/dispatchers/StatusLaneDispatcher";
-import * as models from "../../shared/models";
-import Card from "../containers/Card";
-import Editer from "./Editer";
+import { CardId, StatusLaneId } from "../../../../shared/domain/model";
+import { StatusLane } from "../../../../shared/domain/model/statuslane/StatusLane";
+import { DnDItemType } from "../../constants";
 
 export interface StateProps {
-    lane?: models.StatusLane;
-    name?: string;
+    statusLane?: StatusLane;
 }
 
-export interface DispatchProps {
-    statusLaneDispatcher: StatusLaneDispatcher;
+export interface ActionProps {
 }
 
-export interface OwnProps {
-    id: models.StatusLaneId;
-    openCardModal(cardId: models.CardId);
+export interface OwnProps extends React.Props<{}> {
+    id: StatusLaneId;
+    openCardModal(cardId: CardId);
 }
 
 interface DnDProps {
@@ -31,55 +27,48 @@ interface DnDProps {
     isDragging?: boolean;
 }
 
-type Props = OwnProps
-    & StateProps
-    & DispatchProps
-    & DnDProps
-    & React.Props<{}>;
+type Props = OwnProps & StateProps & ActionProps & DnDProps;
 
-const StatusLane: React.StatelessComponent<Props> = props => {
+const connectDnDComponent = (component: React.ReactElement<{}>) => (props: Props) => {
     return props.connectDragPreview(
         props.connectDropTarget(
-            props.connectDragSource(<div className="list" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
-                <ul className="cards">
-                    {props.lane.cardIds.map(cardId => (
-                        <Card
-                            id={cardId}
-                            key={cardId.value}
-                            onClickCard={props.openCardModal}
-                            onMoveCard={props.statusLaneDispatcher.moveCard}
-                            onDeleteCard={props.statusLaneDispatcher.deleteCard} />
-                    ))}
-                </ul>
-                <button className="add-card-button" onClick={props.statusLaneDispatcher.addNewCard} >
-                    Add Card
-                </button>
-            </div>,
-            ),
+            props.connectDragSource(component),
         ),
     );
 };
+
+const StatusLane: React.StatelessComponent<Props> = props => connectDnDComponent(
+    <div className="status-lane" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
+        <ul className="cards">
+            {props.statusLane.cardIds.map(cardId => (
+                <Card
+                    id={cardId}
+                    key={cardId.value}
+                    onClickCard={props.onClickCard}
+                    onHoverCard={props.onHoverCardOverCardInStatusLane}
+                    onClickDeleteCardButton={props.onClickDeleteCardButton} />
+            ))}
+        </ul>
+        <button className="add-card-button" onClick={props.addCard} >
+            Add Card
+                </button>
+    </div>,
+)(props);
 
 // --------------------------------
 // react-dnd: Drag
 // --------------------------------
 
-interface DnDItem extends models.Entity<models.StatusLaneId> {
+interface DnDItem { readonly id: StatusLaneId; }
 
-}
-
-const listSource: DragSourceSpec<Props> = {
-    beginDrag: (props: Props): DnDItem => {
-        return {
-            id: props.lane.id
-        };
-    },
+const dragSourceSpec: DragSourceSpec<Props> = {
+    beginDrag: (props: Props): DnDItem => ({ id: props.id }),
     isDragging: (props: Props, monitor: DragSourceMonitor): boolean => (
-        models.equals(props.lane.id, (monitor.getItem() as DnDItem).id)
+        props.id.equals((monitor.getItem() as DnDItem).id)
     ),
 };
 
-const collectDragSource: DragSourceCollector = (
+const dragSourceCollector: DragSourceCollector = (
     connect: DragSourceConnector,
     monitor: DragSourceMonitor,
 ): Object => ({
@@ -88,7 +77,7 @@ const collectDragSource: DragSourceCollector = (
     isDragging: monitor.isDragging(),
 });
 
-const dragSource = DragSource<Props>(DnDItemType.StatusLane, listSource, collectDragSource);
+const dragSource = DragSource<Props>(DnDItemType.StatusLane, dragSourceSpec, dragSourceCollector);
 
 // --------------------------------
 // react-dnd: Drop

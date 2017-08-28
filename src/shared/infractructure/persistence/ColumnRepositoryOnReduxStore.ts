@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { Column, ColumnId, ColumnRepository } from "../../domain/model/";
+import { CardId, Column, ColumnId, ColumnRepository } from "../../domain/model/";
 import { addColumn, deleteColumn, updateColumn } from "./redux/column";
 import { dispatch, getState } from "./redux/ReduxStore";
 
@@ -22,4 +22,7 @@ export default class ColumnRepositoryOnReduxStore extends ColumnRepository {
         return getState().columns.find(column => column.id.equals(id));
     }
 
+    public findByCardId(id: CardId): Column {
+        return getState().columns.find(column => column.id.equals(id));
+    }
 }

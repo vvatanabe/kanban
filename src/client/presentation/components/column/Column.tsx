@@ -20,7 +20,7 @@ export interface ActionProps {
     onClickAddCardButton?();
     onClickDeleteCardButton?(cardId: CardId);
     onHoverCard?(hoverCardId: CardId);
-    onHoverCardOverCardInColumn?(hoverCardId: CardId, hoveredCardId: CardId);
+    onHoverCardOverCardInColumn?(hoverCardId: CardId, hoverCardParentId: ColumnId, beHoveredCardId: CardId);
 }
 
 export interface OwnProps {
@@ -75,6 +75,7 @@ const Coulmn: React.StatelessComponent<Props> = props => connectDnDComponent(
                 <Card
                     id={cardId}
                     key={cardId.value}
+                    parentId={props.id}
                     onClickCard={props.onClickCard}
                     onHoverCard={props.onHoverCardOverCardInColumn}
                     onClickDeleteCardButton={props.onClickDeleteCardButton} />

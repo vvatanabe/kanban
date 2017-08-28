@@ -1,6 +1,7 @@
 import { CardId, ColumnId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
 import { AddCardCommand } from "../../../application/column/AddCardCommand";
+import { ColumnCard } from "../../../application/column/ColumnCard";
 import { columnCommandService } from "../../../application/column/ColumnCommandService";
 import { columnQueryService } from "../../../application/column/ColumnQueryService";
 import { UpdateColumnCommand } from "../../../application/column/UpdateColumnCommand";
@@ -29,8 +30,16 @@ const bindActionToProps = (ownProps: OwnProps): ActionProps => ({
     onHoverCard(hoverCardId: CardId) {
         columnCommandService.attachCard(ownProps.id, hoverCardId);
     },
-    onHoverCardOverCardInColumn(hoverCardId: CardId, hoveredCardId: CardId) {
-        columnCommandService.moveCard(ownProps.id, hoverCardId, hoveredCardId);
+    onHoverCardOverCardInColumn(hoverCardId: CardId, hoverCardParentId: ColumnId, beHoveredCardId: CardId) {
+        const src: ColumnCard = {
+            columnId: hoverCardParentId,
+            cardId: hoverCardId,
+        };
+        const dist: ColumnCard = {
+            columnId: ownProps.id,
+            cardId: beHoveredCardId,
+        };
+        columnCommandService.moveCard(src, dist);
     },
 });
 

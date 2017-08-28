@@ -6,6 +6,7 @@ import {
 } from "react-dnd";
 import { CardId, ColumnId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
+import { ColumnCard } from "../../../application/column/ColumnCard";
 import { DnDItemType } from "../../constants";
 import Card from "../card";
 import Editer from "../Editer";
@@ -20,7 +21,7 @@ export interface ActionProps {
     onClickAddCardButton?();
     onClickDeleteCardButton?(cardId: CardId);
     onHoverCard?(hoverCardId: CardId);
-    onHoverCardOverCardInColumn?(hoverCardId: CardId, hoverCardParentId: ColumnId, beHoveredCardId: CardId);
+    moveCard?(src: ColumnCard, dist: ColumnCard);
 }
 
 export interface OwnProps {
@@ -77,7 +78,7 @@ const Coulmn: React.StatelessComponent<Props> = props => connectDnDComponent(
                     key={cardId.value}
                     parentId={props.id}
                     onClickCard={props.onClickCard}
-                    onHoverCard={props.onHoverCardOverCardInColumn}
+                    onHoverCard={props.moveCard}
                     onClickDeleteCardButton={props.onClickDeleteCardButton} />
             ))}
         </ul>

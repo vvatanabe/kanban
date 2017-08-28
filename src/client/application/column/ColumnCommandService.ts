@@ -5,8 +5,8 @@ import {
 import { lazyInject } from "../../modules/TaskBoardModules";
 import { AddCardCommand } from "./AddCardCommand";
 import { ColumnCard } from "./ColumnCard";
+import { MoveColumnCardCommand } from "./MoveColumnCardCommand";
 import { UpdateColumnCommand } from "./UpdateColumnCommand";
-import { CardId } from '../../../shared/domain/model/card/CardId';
 
 @injectable()
 class ColumnCommandService {
@@ -38,7 +38,8 @@ class ColumnCommandService {
         this.cardRepository.delete(cardId);
     }
 
-    public moveCard(src: ColumnCard, dist: ColumnCard) {
+    public moveColumnCard(command: MoveColumnCardCommand) {
+        const { src, dist } = command;
         if (src.columnId.equals(dist.columnId)) {
             const moved = this.columnRepository.find(src.columnId).moveCard(src.cardId, dist.cardId);
             this.columnRepository.update(moved);

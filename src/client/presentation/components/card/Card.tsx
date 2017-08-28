@@ -18,7 +18,10 @@ export interface OwnProps {
   id: CardId;
   parentId: ColumnId | StatusLaneId;
   onClickCard(cardId: CardId);
-  onHoverCard(hoverCardId: CardId, hoverCardParentId: ColumnId | StatusLaneId, beHoveredCardId: CardId);
+  onHoverCard(
+    hover: { parentId: ColumnId | StatusLaneId, cardId: CardId },
+    beHovered: { parentId: ColumnId | StatusLaneId, cardId: CardId },
+  );
   onClickDeleteCardButton(cardId: CardId);
 }
 
@@ -46,8 +49,8 @@ const Card: React.StatelessComponent<Props> = props => (
 );
 
 interface DnDItem {
-  cardId: CardId;
   parentId: ColumnId | StatusLaneId;
+  cardId: CardId;
 }
 
 // --------------------------------
@@ -80,10 +83,10 @@ const dragSource = DragSource<Props>(DnDItemType.Card, cardSource, collectDragSo
 
 const cardTarget: DropTargetSpec<OwnProps> = {
   hover(props: OwnProps, monitor: DropTargetMonitor): void {
-    const beHoveredCardId = props.id;
     const hover = monitor.getItem() as DnDItem;
-    if (!hover.cardId.equals(beHoveredCardId)) {
-      props.onHoverCard(hover.cardId, hover.parentId, beHoveredCardId);
+    const beHovered = { parentId: props.parentId, cardId: props.id };
+    if (!hover.cardId.equals(beHovered.cardId)) {
+      props.onHoverCard(hover, beHovered);
     }
   },
 };

@@ -4,6 +4,7 @@ import { AddCardCommand } from "../../../application/column/AddCardCommand";
 import { ColumnCard } from "../../../application/column/ColumnCard";
 import { columnCommandService } from "../../../application/column/ColumnCommandService";
 import { columnQueryService } from "../../../application/column/ColumnQueryService";
+import { MoveColumnCardCommand } from "../../../application/column/MoveColumnCardCommand";
 import { UpdateColumnCommand } from "../../../application/column/UpdateColumnCommand";
 import { BindComponentProps } from "../../support";
 import { ActionProps, default as Column, OwnProps, StateProps } from "./Column";
@@ -27,19 +28,12 @@ const bindActionToProps = (ownProps: OwnProps): ActionProps => ({
     onClickDeleteCardButton(cardId: CardId) {
         columnCommandService.deleteCard(ownProps.id, cardId);
     },
-    onHoverCard(hoverCardId: CardId) {
+    attachColumnCard(hoverCardId: CardId) {
         columnCommandService.attachCard(ownProps.id, hoverCardId);
     },
-    onHoverCardOverCardInColumn(hoverCardId: CardId, hoverCardParentId: ColumnId, beHoveredCardId: CardId) {
-        const src: ColumnCard = {
-            columnId: hoverCardParentId,
-            cardId: hoverCardId,
-        };
-        const dist: ColumnCard = {
-            columnId: ownProps.id,
-            cardId: beHoveredCardId,
-        };
-        columnCommandService.moveCard(src, dist);
+    moveCard(src: ColumnCard, dist: ColumnCard) {
+        const command: MoveColumnCardCommand = { src, dist };
+        columnCommandService.moveColumnCard(command);
     },
 });
 

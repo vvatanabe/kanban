@@ -11,25 +11,26 @@ import { ActionProps, default as Column, OwnProps, StateProps } from "./Column";
 
 const bindStateToProps = (ownProps: OwnProps): StateProps => ({
     column: columnQueryService.viewColumn(ownProps.id),
+    columnCardIds: List.of(),
 });
 
 const bindActionToProps = (ownProps: OwnProps): ActionProps => ({
-    onClickColumnName() {
+    showFormOfColumnName() {
         columnCommandService.showFormOfColumnName(ownProps.id);
     },
-    onEditColumnName(name: string) {
+    updateColumnName(name: string) {
         const command: UpdateColumnCommand = { name };
         columnCommandService.updateColumn(ownProps.id, command);
     },
-    onClickAddCardButton() {
+    addCard() {
         const command: AddCardCommand = { summary: "New Card" };
         columnCommandService.addCard(ownProps.id, command);
     },
-    onClickDeleteCardButton(cardId: CardId) {
-        columnCommandService.deleteCard(ownProps.id, cardId);
+    deleteCard(id: CardId) {
+        columnCommandService.deleteCard(ownProps.id, id);
     },
-    attachColumnCard(hoverCardId: CardId) {
-        columnCommandService.attachCard(ownProps.id, hoverCardId);
+    attachCard(id: CardId) {
+        columnCommandService.attachCard(ownProps.id, id);
     },
     moveCard(src: ColumnCard, dist: ColumnCard) {
         const command: MoveColumnCardCommand = { src, dist };

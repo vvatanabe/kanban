@@ -1,14 +1,13 @@
-
 import * as React from "react";
 import {
-  ConnectDragSource, ConnectDropTarget, DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor,
-  DragSourceSpec, DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
+  ConnectDragSource, ConnectDropTarget,
+  DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor, DragSourceSpec,
+  DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
 } from "react-dnd";
 import { CardId, ColumnId, StatusLaneId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
+import { ColumnCard } from "../../../application/column/ColumnCard";
 import { DnDItemType } from "../../constants";
-import { ColumnConstructor } from '../../../../shared/domain/model/column/Column';
-import { StatusLaneId } from '../../../../shared/domain/model/statuslane/StatusLaneId';
 
 export interface StateProps {
   card?: model.Card;
@@ -19,8 +18,8 @@ export interface OwnProps {
   parentId: ColumnId | StatusLaneId;
   onClickCard(cardId: CardId);
   onHoverCard(
-    hover: { parentId: ColumnId | StatusLaneId, cardId: CardId },
-    beHovered: { parentId: ColumnId | StatusLaneId, cardId: CardId },
+    hover: { cardId: CardId, parentId: ColumnId | StatusLaneId },
+    beHovered: { cardId: CardId, parentId: ColumnId | StatusLaneId },
   );
   onClickDeleteCardButton(cardId: CardId);
 }
@@ -49,8 +48,8 @@ const Card: React.StatelessComponent<Props> = props => (
 );
 
 interface DnDItem {
-  parentId: ColumnId | StatusLaneId;
   cardId: CardId;
+  parentId: ColumnId | StatusLaneId;
 }
 
 // --------------------------------
@@ -84,7 +83,10 @@ const dragSource = DragSource<Props>(DnDItemType.Card, cardSource, collectDragSo
 const cardTarget: DropTargetSpec<OwnProps> = {
   hover(props: OwnProps, monitor: DropTargetMonitor): void {
     const hover = monitor.getItem() as DnDItem;
-    const beHovered = { parentId: props.parentId, cardId: props.id };
+    const beHovered = {
+      cardId: props.id,
+      parentId: props.parentId,
+    };
     if (!hover.cardId.equals(beHovered.cardId)) {
       props.onHoverCard(hover, beHovered);
     }

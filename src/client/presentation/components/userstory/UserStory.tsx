@@ -7,6 +7,7 @@ import {
 import { CardId, UserStoryId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
 import Editer from "../Editer";
+import StatusLane from "../StatusLane";
 
 export interface OwnProps {
     id: UserStoryId;
@@ -65,10 +66,10 @@ const UserStoryLane: React.StatelessComponent<Props> = props => connectDnDCompon
             }
         </div>
         <ul className="statuses">
-            {props.userStory.statusLaneIds.map(statusLaneId => (
+            {props.userStory.statusLaneIds.map(id => (
                 <StatusLane
-                    id={statusLaneId}
-                    openCardModal={props.openCardModal}
+                    id={id}
+                    onClickCard={props.onClickCard}
                 />
             ))}
         </ul>
@@ -79,7 +80,7 @@ const UserStoryLane: React.StatelessComponent<Props> = props => connectDnDCompon
 // react-dnd: Drag Setting
 // --------------------------------
 
-type DnDItem = models.Entity<models.StoryLaneId>;
+type DnDItem = models.Entity<StoryLaneId>;
 
 const dragSourceSpec: DragSourceSpec<Props> = {
     beginDrag: (props: Props): DnDItem => ({

@@ -7,6 +7,7 @@ import {
 import { CardId, ColumnId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
 import { DnDItemType } from "../../constants";
+import { ConnectDnDComponent } from "../../support/ConnectDnDComponent";
 import Card from "../card";
 import Editer from "../Editer";
 
@@ -39,15 +40,11 @@ interface DnDProps {
 
 type Props = OwnProps & StateProps & ActionProps & DnDProps & React.Props<{}>;
 
-const connectDnDComponent = (component: React.ReactElement<Props>) => (props: Props) => {
-    return props.connectDragPreview(
-        props.connectDropTarget(
-            props.connectDragSource(component),
-        ),
-    );
-};
-
-const Coulmn: React.StatelessComponent<Props> = props => connectDnDComponent(
+const Coulmn: React.StatelessComponent<Props> = props => ConnectDnDComponent(
+    props.connectDragPreview,
+    props.connectDragSource,
+    props.connectDropTarget,
+)(
     <div className="column" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
         <div className="column__header">
             <div className="column__header-name">
@@ -86,7 +83,7 @@ const Coulmn: React.StatelessComponent<Props> = props => connectDnDComponent(
             Add Card
                 </button>
     </div >,
-)(props);
+);
 
 // --------------------------------
 // react-dnd

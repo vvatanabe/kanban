@@ -11,7 +11,6 @@ import { ActionProps, default as Column, OwnProps, StateProps } from "./Column";
 
 const bindStateToProps = (ownProps: OwnProps): StateProps => ({
     column: columnQueryService.viewColumn(ownProps.id),
-    columnCardIds: List.of(),
 });
 
 const bindActionToProps = (ownProps: OwnProps): ActionProps => ({

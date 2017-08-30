@@ -15,11 +15,11 @@ export interface StateProps {
 }
 
 export interface ActionProps {
-    onClickColumnName?();
-    onEditColumnName?(name: string);
-    onClickAddCardButton?();
-    onClickDeleteCardButton?(cardId: CardId);
-    onHoverCard?(hoverCardId: CardId);
+    showFormOfColumnName?();
+    updateColumnName?(name: string);
+    addCard?();
+    deleteCard?(cardId: CardId);
+    attachCard?(hoverCardId: CardId);
     moveCard?(src: CardId, dist: CardId);
 }
 
@@ -27,19 +27,19 @@ export interface OwnProps {
     id: ColumnId;
     onClickCard(cardId: CardId);
     onClickDeleteColumnButton(columnId: ColumnId);
-    onHoverColumn(src: ColumnId, dist: ColumnId);
+    onHoverColumn(hover: ColumnId, beHovered: ColumnId);
 }
 
 interface DnDProps {
     connectDragPreview?: ConnectDragPreview;
-    connectDragSource?: ConnectDragSource; 1;
+    connectDragSource?: ConnectDragSource;
     connectDropTarget?: ConnectDropTarget;
     isDragging?: boolean;
 }
 
 type Props = OwnProps & StateProps & ActionProps & DnDProps & React.Props<{}>;
 
-const connectDnDComponent = (component: React.ReactElement<{}>) => (props: Props) => {
+const connectDnDComponent = (component: React.ReactElement<Props>) => (props: Props) => {
     return props.connectDragPreview(
         props.connectDropTarget(
             props.connectDragSource(component),
@@ -53,8 +53,8 @@ const Coulmn: React.StatelessComponent<Props> = props => connectDnDComponent(
             <div className="column__header-name">
                 <Editer
                     value={props.column.name}
-                    onValueClick={props.onClickColumnName}
-                    onEdit={props.onEditColumnName}
+                    onValueClick={props.showFormOfColumnName}
+                    onEdit={props.updateColumnName}
                     editing={props.column.editing}
                 />
             </div>
@@ -77,22 +77,26 @@ const Coulmn: React.StatelessComponent<Props> = props => connectDnDComponent(
                     key={cardId.value}
                     onClickCard={props.onClickCard}
                     onHoverCard={props.moveCard}
-                    onClickDeleteCardButton={props.onClickDeleteCardButton} />
+                    onClickDeleteCardButton={props.deleteCard} />
             ))}
         </ul>
         <button
             className="add-card-button"
-            onClick={props.onClickAddCardButton} >
+            onClick={props.addCard} >
             Add Card
                 </button>
     </div >,
 )(props);
 
 // --------------------------------
-// react-dnd: Drag
+// react-dnd
 // --------------------------------
 
 interface DnDItem { readonly id: ColumnId; }
+
+// --------------------------------
+// react-dnd: Drag
+// --------------------------------
 
 const dragSourceSpec: DragSourceSpec<Props> = {
     beginDrag: (props: Props): DnDItem => ({ id: props.id }),
@@ -122,13 +126,15 @@ const dragSource = DragSource<Props>(
 
 const dropTargetSpec: DropTargetSpec<Props> = {
     hover: (targetProps: Props, monitor: DropTargetMonitor) => {
-        const hoverItemType = monitor.getItemType();
-        const hoverItemId = (monitor.getItem() as any).id;
-        const hoveredColumnId = targetProps.id;
-        if (hoverItemType === DnDItemType.Card && targetProps.column.cardIds.isEmpty) {
-            targetProps.onHoverCard(hoverItemId as CardId);
-        } else if (hoverItemType === DnDItemType.Column && !hoveredColumnId.equals(hoverItemId)) {
-            targetProps.onHoverColumn(hoverItemId as ColumnId, hoveredColumnId);
+        const hover = (monitor.getItem() as any).id;
+        const beHovered = targetProps.id;
+        switch (monitor.getItemType()) {
+            case DnDItemType.Card: if (!targetProps.column.hasCard) {
+                targetProps.attachCard(hover as CardId);
+            }
+            case DnDItemType.Column: if (!beHovered.equals(hover)) {
+                targetProps.onHoverColumn(hover, beHovered);
+            }
         }
     },
 };

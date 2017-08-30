@@ -23,6 +23,6 @@ export default class ColumnRepositoryOnReduxStore extends ColumnRepository {
     }
 
     public findByCardId(id: CardId): Column {
-        return getState().columns.find(column => column.hasCard(id));
+        return getState().columns.find(column => column.hasCardOf(id));
     }
 }

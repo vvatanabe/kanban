@@ -17,6 +17,7 @@ export class Column extends Entity<ColumnId>(defaultValues) {
 
     get name(): string { return this.get("name"); }
     get cardIds(): List<CardId> { return this.get("cardIds"); }
+    get hasCard(): boolean { return !this.cardIds.isEmpty; }
 
     constructor(params: ColumnConstructor) {
         super(params);
@@ -38,7 +39,7 @@ export class Column extends Entity<ColumnId>(defaultValues) {
         return this.merge({ cardIds }) as Column;
     }
 
-    public hasCard(id: CardId): boolean {
+    public hasCardOf(id: CardId): boolean {
         return this.cardIds.some(cardId => cardId.equals(id));
     }
 

@@ -4,7 +4,6 @@ import {
 } from "../../../shared/domain/model";
 import { lazyInject } from "../../modules/TaskBoardModules";
 import { AddCardCommand } from "./AddCardCommand";
-import { ColumnCard } from "./ColumnCard";
 import { MoveCardCommand } from "./MoveCardCommand";
 import { UpdateColumnCommand } from "./UpdateColumnCommand";
 

@@ -38,6 +38,10 @@ export class Column extends Entity<ColumnId>(defaultValues) {
         return this.merge({ cardIds }) as Column;
     }
 
+    public hasCard(id: CardId): boolean {
+        return this.cardIds.some(cardId => cardId.equals(id));
+    }
+
     public equals(obj: any): boolean {
         return obj instanceof Column && obj.id.equals(this.id);
     }

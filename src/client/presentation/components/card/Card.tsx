@@ -6,7 +6,6 @@ import {
 } from "react-dnd";
 import { CardId, ColumnId, StatusLaneId } from "../../../../shared/domain/model";
 import * as model from "../../../../shared/domain/model";
-import { ColumnCard } from "../../../application/column/ColumnCard";
 import { DnDItemType } from "../../constants";
 
 export interface StateProps {
@@ -15,12 +14,8 @@ export interface StateProps {
 
 export interface OwnProps {
   id: CardId;
-  parentId: ColumnId | StatusLaneId;
   onClickCard(cardId: CardId);
-  onHoverCard(
-    hover: { cardId: CardId, parentId: ColumnId | StatusLaneId },
-    beHovered: { cardId: CardId, parentId: ColumnId | StatusLaneId },
-  );
+  onHoverCard(hover: CardId, beHovered: CardId);
   onClickDeleteCardButton(cardId: CardId);
 }
 
@@ -49,7 +44,6 @@ const Card: React.StatelessComponent<Props> = props => (
 
 interface DnDItem {
   cardId: CardId;
-  parentId: ColumnId | StatusLaneId;
 }
 
 // --------------------------------
@@ -59,7 +53,6 @@ interface DnDItem {
 const cardSource: DragSourceSpec<Props> = {
   beginDrag: (props: Props): DnDItem => ({
     cardId: props.id,
-    parentId: props.parentId,
   }),
   isDragging: (props: Props, monitor: DragSourceMonitor): boolean => (
     props.id.equals((monitor.getItem() as DnDItem).cardId)
@@ -82,12 +75,9 @@ const dragSource = DragSource<Props>(DnDItemType.Card, cardSource, collectDragSo
 
 const cardTarget: DropTargetSpec<OwnProps> = {
   hover(props: OwnProps, monitor: DropTargetMonitor): void {
-    const hover = monitor.getItem() as DnDItem;
-    const beHovered = {
-      cardId: props.id,
-      parentId: props.parentId,
-    };
-    if (!hover.cardId.equals(beHovered.cardId)) {
+    const hover = (monitor.getItem() as DnDItem).cardId;
+    const beHovered = props.id;
+    if (!hover.equals(beHovered)) {
       props.onHoverCard(hover, beHovered);
     }
   },

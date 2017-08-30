@@ -5,7 +5,7 @@ import {
 import { lazyInject } from "../../modules/TaskBoardModules";
 import { AddCardCommand } from "./AddCardCommand";
 import { ColumnCard } from "./ColumnCard";
-import { MoveColumnCardCommand } from "./MoveColumnCardCommand";
+import { MoveCardCommand } from "./MoveCardCommand";
 import { UpdateColumnCommand } from "./UpdateColumnCommand";
 
 @injectable()
@@ -38,17 +38,12 @@ class ColumnCommandService {
         this.cardRepository.delete(cardId);
     }
 
-    public moveColumnCard(command: MoveColumnCardCommand) {
+    public moveCard(command: MoveCardCommand) {
         const { src, dist } = command;
-        if (src.columnId.equals(dist.columnId)) {
-            const moved = this.columnRepository.find(src.columnId).moveCard(src.cardId, dist.cardId);
-            this.columnRepository.update(moved);
-        } else {
-            const detached = this.columnRepository.find(src.columnId).detachCard(src.cardId);
-            const attached = this.columnRepository.find(dist.columnId).attachCard(dist.cardId);
-            this.columnRepository.update(detached);
-            this.columnRepository.update(attached);
-        }
+        const detached = this.columnRepository.findByCardId(src).detachCard(src);
+        const attached = this.columnRepository.findByCardId(dist).attachCard(dist);
+        this.columnRepository.update(detached);
+        this.columnRepository.update(attached);
     }
 
     public showFormOfColumnName(columnId: ColumnId) {

@@ -32,9 +32,9 @@ const bindActionToProps = (ownProps: OwnProps): ActionProps => ({
     attachCard(id: CardId) {
         columnCommandService.attachCard(ownProps.id, id);
     },
-    moveCard(src: ColumnCard, dist: ColumnCard) {
+    moveCard(src: CardId, dist: CardId) {
         const command: MoveColumnCardCommand = { src, dist };
-        columnCommandService.moveColumnCard(command);
+        columnCommandService.moveCard(command);
     },
 });
 

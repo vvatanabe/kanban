@@ -5,19 +5,24 @@ import {
     DropTarget, DropTargetCollector, DropTargetConnector, DropTargetMonitor, DropTargetSpec,
 } from "react-dnd";
 import { CardId, StatusLaneId } from "../../../../shared/domain/model";
-import { StatusLane } from "../../../../shared/domain/model/statuslane/StatusLane";
+import * as model from "../../../../shared/domain/model";
 import { DnDItemType } from "../../constants";
-
-export interface StateProps {
-    statusLane?: StatusLane;
-}
-
-export interface ActionProps {
-}
+import Card from "../card";
 
 export interface OwnProps extends React.Props<{}> {
     id: StatusLaneId;
-    openCardModal(cardId: CardId);
+    onClickCard(cardId: CardId);
+}
+
+export interface StateProps {
+    statusLane?: model.StatusLane;
+}
+
+export interface ActionProps {
+    addCard?();
+    deleteCard?(cardId: CardId);
+    attachCard?(cardId: CardId);
+    moveCard?(src: CardId, dist: CardId);
 }
 
 interface DnDProps {
@@ -29,31 +34,23 @@ interface DnDProps {
 
 type Props = OwnProps & StateProps & ActionProps & DnDProps;
 
-const connectDnDComponent = (component: React.ReactElement<{}>) => (props: Props) => {
-    return props.connectDragPreview(
-        props.connectDropTarget(
-            props.connectDragSource(component),
-        ),
-    );
-};
-
-const StatusLane: React.StatelessComponent<Props> = props => connectDnDComponent(
+const StatusLane: React.StatelessComponent<Props> = props => props.connectDropTarget(
     <div className="status-lane" style={{ opacity: props.isDragging ? 0.4 : 1 }}>
         <ul className="cards">
-            {props.statusLane.cardIds.map(cardId => (
+            {props.statusLane.cardIds.map(id => (
                 <Card
-                    id={cardId}
-                    key={cardId.value}
+                    id={id}
+                    key={id.value}
                     onClickCard={props.onClickCard}
-                    onHoverCard={props.onHoverCardOverCardInStatusLane}
-                    onClickDeleteCardButton={props.onClickDeleteCardButton} />
+                    onHoverCard={props.moveCard}
+                    onClickDeleteCardButton={props.deleteCard} />
             ))}
         </ul>
         <button className="add-card-button" onClick={props.addCard} >
             Add Card
-                </button>
+            </button>
     </div>,
-)(props);
+);
 
 // --------------------------------
 // react-dnd: Drag
@@ -61,47 +58,31 @@ const StatusLane: React.StatelessComponent<Props> = props => connectDnDComponent
 
 interface DnDItem { readonly id: StatusLaneId; }
 
-const dragSourceSpec: DragSourceSpec<Props> = {
-    beginDrag: (props: Props): DnDItem => ({ id: props.id }),
-    isDragging: (props: Props, monitor: DragSourceMonitor): boolean => (
-        props.id.equals((monitor.getItem() as DnDItem).id)
-    ),
-};
-
-const dragSourceCollector: DragSourceCollector = (
-    connect: DragSourceConnector,
-    monitor: DragSourceMonitor,
-): Object => ({
-    connectDragSource: connect.dragSource(),
-    connectDragPreview: connect.dragPreview(),
-    isDragging: monitor.isDragging(),
-});
-
-const dragSource = DragSource<Props>(DnDItemType.StatusLane, dragSourceSpec, dragSourceCollector);
-
 // --------------------------------
-// react-dnd: Drop
+// react-dnd: Drop only
 // --------------------------------
 
-const listTarget: DropTargetSpec<Props> = {
+const dropTargetSpec: DropTargetSpec<Props> = {
     hover: (targetProps: Props, monitor: DropTargetMonitor) => {
-        const sourceType = monitor.getItemType();
-        const sourceId = (monitor.getItem() as any).id;
-        const targetStatusLaneId = targetProps.lane.id;
-        if (sourceType === DnDItemType.Card && targetProps.lane.cardIds.length === 0) {
-            targetProps.statusLaneDispatcher.attachCard(sourceId as models.CardId);
-        } else if (sourceType === DnDItemType.StatusLane && !models.equals(targetStatusLaneId, sourceId)) {
-            targetProps.moveStatusLane(sourceId as models.StatusLaneId, targetStatusLaneId);
+        const hover = (monitor.getItem() as DnDItem).id;
+        const beHovered = targetProps.id;
+        if (!targetProps.statusLane.hasCard) {
+            targetProps.attachCard(hover as CardId);
         }
     },
 };
 
-const collectDropTarget: DropTargetCollector = (
+
+const dropTargetCollector: DropTargetCollector = (
     connect: DropTargetConnector,
 ): Object => ({
     connectDropTarget: connect.dropTarget(),
 });
 
-const dropTarget = DropTarget<Props>([DnDItemType.Card, DnDItemType.StatusLane], listTarget, collectDropTarget);
+const dropTarget = DropTarget<Props>(
+    [DnDItemType.Card],
+    dropTargetSpec,
+    dropTargetCollector,
+);
 
-export default dragSource(dropTarget(StatusLane));
+export default dropTarget(StatusLane);

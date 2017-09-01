@@ -1,24 +1,30 @@
-import { connect } from "react-redux";
-import * as Redux from "redux";
-import StatusLaneDispatcher from "../../shared/dispatchers/StatusLaneDispatcher";
-import { Action, AppState, Card } from "../../shared/models";
-import { default as StatusLane, DispatchProps, OwnProps, StateProps } from "../components/StatusLane";
-import store from "../store";
+import { CardId, ColumnId } from "../../../../shared/domain/model";
+import * as model from "../../../../shared/domain/model";
+import { BindComponentProps } from "../../support";
+import { ActionProps, default as StatusLane, OwnProps, StateProps } from "./StatusLane";
 
-const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
-    const ownStatusLane = state.statusLanes.find(statusLane => statusLane.id.equals(ownProps.id));
-    const status = state.statuses.find(status => equals(status.id, ownStatusLane.statusId));
-    return {
-        lane: ownStatusLane,
-        name: status.name,
-    };
-};
-
-const mapDispatchToProps = (dispatch: Redux.Dispatch<Action<any>>, ownProps: OwnProps): DispatchProps => ({
-    statusLaneDispatcher: new StatusLaneDispatcher(dispatch, store.getState, ownProps.id),
+const bindStateToProps = (ownProps: OwnProps): StateProps => ({
+    statusLane: statusLaneQueryService.viewStatusLane(ownProps.id),
 });
 
-export default connect<StateProps, DispatchProps, OwnProps>(
-    mapStateToProps,
-    mapDispatchToProps,
+const bindActionToProps = (ownProps: OwnProps): ActionProps => ({
+    addCard() {
+        const command: AddCardCommand = { summary: "New Card" };
+        statusLaneCommandService.addCard(ownProps.id, command);
+    },
+    deleteCard(id: CardId) {
+        statusLaneCommandService.deleteCard(ownProps.id, id);
+    },
+    attachCard(id: CardId) {
+        statusLaneCommandService.attachCard(ownProps.id, id);
+    },
+    moveCard(src: CardId, dist: CardId) {
+        const command: MoveColumnCardCommand = { src, dist };
+        statusLaneCommandService.moveCard(command);
+    },
+});
+
+export default BindComponentProps(
+    bindStateToProps,
+    bindActionToProps,
 )(StatusLane);

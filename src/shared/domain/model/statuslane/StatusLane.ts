@@ -1,43 +1,68 @@
 import { List } from "immutable";
-import { CardId } from "./CardId";
-import { Entity } from "./Entity";
-import { StatusId } from "./StatusId";
-import { StatusLaneId } from "./StatusLaneId";
-import { Undefined } from "./Undefined";
+import { CardId, Entity, EntityConstructor, StatusLaneId } from "../";
 
-export class StatusLane implements Entity<StatusLaneId> {
+export interface StatusLaneConstructor extends EntityConstructor<ColumnId> {
+    readonly cardIds: List<CardId>;
+}
 
-    public static fromJs(obj: any): StatusLane {
-        return StatusLane.create({
-            id: StatusLaneId.create(obj.id),
-            statusId: StatusId.create(obj.statusId),
-            cardIds: List.of(obj.cardIds.map(cardId => CardId.create(cardId))),
-        });
+const defaultValues: StatusLaneConstructor = {
+    id: new StatusLaneId(),
+    editing: false,
+    name: "",
+    cardIds: List.of(),
+};
+
+export class StatusLane extends Entity<StatusLaneId>(defaultValues) {
+
+    get cardIds(): List<CardId> { return this.get("cardIds"); }
+    get hasCard(): boolean { return !this.cardIds.isEmpty; }
+
+    constructor(params: StatusLaneConstructor) {
+        super(params);
     }
 
-    public static create({
-        id = new Undefined(),
-        statusId = new Undefined(),
-        cardIds = List.of(),
-    }: { id?: StatusLaneId; statusId?: StatusId; cardIds?: List<CardId>; }): StatusLane {
-        return new StatusLane(id, statusId, cardIds);
+    public attachCard(cardId: CardId): StatusLane {
+        return this.merge({ cardIds: this.cardIds.push(cardId) }) as StatusLane;
+    }
+    public detachCard(cardId: CardId): StatusLane {
+        return this.merge({ cardIds: this.cardIds.filter(id => !id.equals(cardId)) }) as StatusLane;
+    }
+    public moveCard(srcId: CardId, distId: CardId): StatusLane {
+        const srcIndex = this.cardIds.findIndex(id => id.equals(srcId));
+        const distIndex = this.cardIds.findIndex(id => id.equals(distId));
+        const cardIds = this.cardIds.delete(srcIndex).insert(distIndex, srcId);
+        return this.merge({ cardIds }) as StatusLane;
     }
 
-    constructor(
-        readonly id: StatusLaneId,
-        readonly statusId: StatusId,
-        readonly cardIds: List<CardId>,
-    ) { }
+    public hasCardOf(id: CardId): boolean {
+        return this.cardIds.some(cardId => cardId.equals(id));
+    }
 
     public equals(obj: any): boolean {
         return obj instanceof StatusLane && obj.id.equals(this.id);
     }
 
-    public copy(params: {
-        id?: StatusLaneId,
-        statusId?: StatusId,
-        cardIds?: List<CardId>,
-    }): StatusLane {
-        return Object.assign({}, this, params);
+    public toJS(): any {
+        const obj = super.toJS();
+        return {
+            ...obj,
+            ...{
+                id: obj.id.value,
+                cardIds: obj.cardIds.map(cardId => cardId.value),
+            },
+        };
     }
+}
+
+export namespace StatusLane {
+    export const fromJs = (obj: any): StatusLane => new StatusLane({
+        ...obj,
+        ...{
+            id: new StatusLaneId(obj.id),
+            cardIds: List.of<CardId>(obj.cardIds.map(id => new CardId(id))),
+        },
+    });
+    export const create = (): StatusLane => new StatusLane({
+        ...defaultValues,
+    });
 }

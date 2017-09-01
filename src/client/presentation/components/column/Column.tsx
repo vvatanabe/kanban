@@ -11,6 +11,13 @@ import { ConnectDnDComponent } from "../../support/ConnectDnDComponent";
 import Card from "../card";
 import Editer from "../Editer";
 
+export interface OwnProps extends React.Props<{}> {
+    id: ColumnId;
+    onClickCard(cardId: CardId);
+    onClickDeleteColumnButton(columnId: ColumnId);
+    onHoverColumn(hover: ColumnId, beHovered: ColumnId);
+}
+
 export interface StateProps {
     column?: model.Column;
 }
@@ -19,16 +26,9 @@ export interface ActionProps {
     showFormOfColumnName?();
     updateColumnName?(name: string);
     addCard?();
-    deleteCard?(cardId: CardId);
-    attachCard?(hoverCardId: CardId);
+    deleteCard?(id: CardId);
+    attachCard?(id: CardId);
     moveCard?(src: CardId, dist: CardId);
-}
-
-export interface OwnProps {
-    id: ColumnId;
-    onClickCard(cardId: CardId);
-    onClickDeleteColumnButton(columnId: ColumnId);
-    onHoverColumn(hover: ColumnId, beHovered: ColumnId);
 }
 
 interface DnDProps {
@@ -38,7 +38,7 @@ interface DnDProps {
     isDragging?: boolean;
 }
 
-type Props = OwnProps & StateProps & ActionProps & DnDProps & React.Props<{}>;
+type Props = OwnProps & StateProps & ActionProps & DnDProps;
 
 const Coulmn: React.StatelessComponent<Props> = props => ConnectDnDComponent(
     props.connectDragPreview,
@@ -111,7 +111,7 @@ const dragSourceCollector: DragSourceCollector = (
     isDragging: monitor.isDragging(),
 });
 
-const dragSource = DragSource<Props>(
+const dragSource = DragSource(
     DnDItemType.Column,
     dragSourceSpec,
     dragSourceCollector,
@@ -123,7 +123,7 @@ const dragSource = DragSource<Props>(
 
 const dropTargetSpec: DropTargetSpec<Props> = {
     hover: (targetProps: Props, monitor: DropTargetMonitor) => {
-        const hover = (monitor.getItem() as any).id;
+        const hover = (monitor.getItem() as DnDItem).id;
         const beHovered = targetProps.id;
         switch (monitor.getItemType()) {
             case DnDItemType.Card: if (!targetProps.column.hasCard) {

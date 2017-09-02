@@ -1,14 +1,10 @@
-import { StatusLane, StatusLaneId } from "../../shared/models";
-import store from "../store";
+import { injectable } from "inversify";
+import { CardId, StatusLane, StatusLaneId } from "../";
 
-export function findById(id: StatusLaneId): StatusLane {
-    return store.getState().statusLanes.find(lane => lane.id.equals(id));
+@injectable()
+export abstract class ColumnRepository {
+    public abstract add(statusLane: StatusLane);
+    public abstract update(statusLane: StatusLane);
+    public abstract delete(id: StatusLaneId);
+    public abstract find(id: StatusLaneId): StatusLane;
 }
-
-export function create() {
-    store.dispatch(statusLanesAction.createStatusLane());
-}
-
-this.dispatch(statusLanesAction.detachStatusLaneFromBoard(this.boardId, laneId));
-this.dispatch(statusLanesAction.deleteStatusLane(laneId));
-this.dispatch(cardsAction.deleteCards(statusLaneStore.findById(laneId).cardIds));

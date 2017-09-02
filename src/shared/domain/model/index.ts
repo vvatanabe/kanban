@@ -23,5 +23,6 @@ export * from "./status/StatusId";
 export * from "./status/Status";
 export * from "./statuslane/StatusLane";
 export * from "./statuslane/StatusLaneId";
+export * from "./statuslane/StatusLaneRepository";
 export * from "./userstory/UserStory";
 export * from "./userstory/UserStoryId";
